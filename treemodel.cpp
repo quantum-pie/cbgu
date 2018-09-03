@@ -1,21 +1,13 @@
 #include "treemodel.h"
 #include "roottreeitem.h"
 
-TreeModel::TreeModel(const nlohmann::json & structure, QObject * parent)
-    : QAbstractItemModel{ parent }
-{
-    // TODO parse json and build tree
-    root_item = new RootTreeItem;
-}
-
-TreeModel::~TreeModel()
-{
-    delete root_item;
-}
+TreeModel::TreeModel(QObject * parent)
+    : QAbstractItemModel{ parent }, root_item{}
+{}
 
 int TreeModel::columnCount(const QModelIndex &) const
 {
-    return root_item->column_count();
+    return root_item.column_count();
 }
 
 QVariant TreeModel::data(const QModelIndex &index, int role) const
@@ -36,7 +28,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     if(!index.isValid())
         return 0;
 
-    Qt::ItemFlags flg { QAbstractItemModel::flags(index) };
+    auto flg { QAbstractItemModel::flags(index) };
     if(get_item(index)->is_editable(index.column()))
         return Qt::ItemIsEditable | flg;
     else return flg;
@@ -45,7 +37,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return root_item->data(section);
+        return root_item.data(section);
 
     return QVariant{};
 }
@@ -58,7 +50,7 @@ AbstractTreeItem * TreeModel::get_item(const QModelIndex &index) const
         if(item)
             return item;
     }
-    return root_item;
+    return const_cast<RootTreeItem *>(&root_item);
 }
 
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const
@@ -66,7 +58,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     if(parent.isValid() && parent.column() != 0)
         return QModelIndex{};
 
-    AbstractTreeItem * parent_item = get_item(parent);
+    auto parent_item = get_item(parent);
 
     auto child_item = parent_item->child(row);
     if(child_item)
@@ -76,7 +68,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 
 bool TreeModel::insert_row(AbstractTreeItem * row, int position, const QModelIndex &parent)
 {
-    AbstractTreeItem * parent_item = get_item(parent);
+    auto parent_item = get_item(parent);
     bool success;
 
     beginInsertRows(parent, position, position);
@@ -91,10 +83,10 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     if(!index.isValid())
         return QModelIndex{};
 
-    AbstractTreeItem * child_item = get_item(index);
+    auto child_item = get_item(index);
     auto parent_item = child_item->parent();
 
-    if(parent_item == root_item)
+    if(parent_item == &root_item)
         return QModelIndex{};
 
     return createIndex(static_cast<int>(parent_item->child_number()), 0, parent_item);
@@ -115,7 +107,7 @@ bool TreeModel::is_category(const QModelIndex &index) const
 
 bool TreeModel::remove_row(int position, const QModelIndex &parent)
 {
-    AbstractTreeItem * parent_item = get_item(parent);
+    auto parent_item = get_item(parent);
     bool success = true;
 
     beginRemoveRows(parent, position, position);
@@ -127,8 +119,7 @@ bool TreeModel::remove_row(int position, const QModelIndex &parent)
 
 int TreeModel::rowCount(const QModelIndex &parent) const
 {
-    AbstractTreeItem * parent_item = get_item(parent);
-
+    auto parent_item = get_item(parent);
     return parent_item->child_count();
 }
 
@@ -137,11 +128,16 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
     if(role != Qt::EditRole)
         return false;
 
-    AbstractTreeItem * item = get_item(index);
+    auto item = get_item(index);
     bool result = item->set_data(value, index.column());
 
     if(result)
         emit dataChanged(index, index);
 
     return result;
+}
+
+json TreeModel::get_json() const
+{
+    return root_item.get_json();
 }

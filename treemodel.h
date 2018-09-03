@@ -1,23 +1,22 @@
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
+#include "roottreeitem.h"
+
 #include "nlohmann/json.hpp"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 
-#include <memory>
-
-class AbstractTreeItem;
+using namespace nlohmann;
 
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    explicit TreeModel(const nlohmann::json & structure, QObject * parent = nullptr);
-    ~TreeModel() override;
+    explicit TreeModel(QObject * parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const override;
 
@@ -39,14 +38,14 @@ public:
     bool remove_row(int position, const QModelIndex &parent = QModelIndex());
 
     bool is_category(const QModelIndex & index) const;
-    void rebuild(const nlohmann::json & structure);
 
-    // debug
+    json get_json() const;
+
     QModelIndex index(AbstractTreeItem * item) const;
 
 private:
     AbstractTreeItem * get_item(const QModelIndex &index) const;
-    AbstractTreeItem * root_item;
+    RootTreeItem root_item;
 };
 
 #endif // TREEMODEL_H
