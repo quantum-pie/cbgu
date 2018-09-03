@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = cbgu
 TEMPLATE = app
+CONFIG += c++14
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -26,14 +27,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    meal.cpp
+    meal.cpp \
+    mealtreeitem.cpp \
+    categorytreeitem.cpp \
+    abstracttreeitem.cpp \
+    treemodel.cpp \
+    roottreeitem.cpp \
+    ingredientsdialog.cpp \
+    ingredienttreeitem.cpp
 
 HEADERS += \
         mainwindow.h \
     ingredient.h \
     meal.h \
     abstractproduct.h \
-    librarytreeitem.h
+    categorytreeitem.h \
+    ingredienttreeitem.h \
+    mealtreeitem.h \
+    abstracttreeitem.h \
+    treemodel.h \
+    roottreeitem.h \
+    ingredientsdialog.h \
+    nlohmann/json.hpp
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    ingredientsdialog.ui
