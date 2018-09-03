@@ -4,12 +4,11 @@
 #include "abstractproduct.h"
 
 #include <vector>
-#include <memory>
 
 struct Meal : AbstractProduct
 {
 public:
-    using ingredients_container_type = std::vector<std::shared_ptr<const AbstractProduct>>;
+    using ingredients_container_type = std::vector<std::pair<const AbstractProduct *, double>>;
 
     template<typename S, typename A>
     Meal(S&& name, A&& ingredients)
@@ -29,6 +28,7 @@ public:
     double get_carbs() const override;
 
     ingredients_container_type get_ingredients();
+    double total_weight() const;
 
 private:
     ingredients_container_type ingredients;

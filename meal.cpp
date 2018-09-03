@@ -8,39 +8,49 @@ Meal::ingredients_container_type Meal::get_ingredients()
 double Meal::get_calories() const
 {
     double res{ 0 };
-    for(auto ingredient : ingredients)
+    for(auto& ingredient : ingredients)
     {
-        res += ingredient->get_calories();
+        res += ingredient.first->get_calories() * ingredient.second;
     }
-    return res / ingredients.size();
+    return 100 * res / total_weight();
 }
 
 double Meal::get_proteins() const
 {
     double res{ 0 };
-    for(auto ingredient : ingredients)
+    for(auto& ingredient : ingredients)
     {
-        res += ingredient->get_proteins();
+        res += ingredient.first->get_proteins() * ingredient.second;
     }
-    return res / ingredients.size();
+    return 100 * res / total_weight();
 }
 
 double Meal::get_fats() const
 {
     double res{ 0 };
-    for(auto ingredient : ingredients)
+    for(auto& ingredient : ingredients)
     {
-        res += ingredient->get_fats();
+        res += ingredient.first->get_fats() * ingredient.second;
     }
-    return res / ingredients.size();
+    return 100 * res / total_weight();
 }
 
 double Meal::get_carbs() const
 {
     double res{ 0 };
-    for(auto ingredient : ingredients)
+    for(auto& ingredient : ingredients)
     {
-        res += ingredient->get_carbs();
+        res += ingredient.first->get_carbs() * ingredient.second;
     }
-    return res / ingredients.size();
+    return 100 * res / total_weight();
+}
+
+double Meal::total_weight() const
+{
+    double res{ 0 };
+    for(auto& ingredient : ingredients)
+    {
+        res += ingredient.second;
+    }
+    return res;
 }
