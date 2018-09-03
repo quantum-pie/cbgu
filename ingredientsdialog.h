@@ -32,8 +32,6 @@ private slots:
     void cancel_pressed();
 
 private:
-    void save_tree();
-
     void add_category(const QModelIndex & index = QModelIndex{});
     void add_ingredient(const QModelIndex & index = QModelIndex{});
 

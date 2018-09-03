@@ -5,9 +5,11 @@
 #include "categorytreeitem.h"
 #include "ingredienttreeitem.h"
 #include "treeutils.h"
+#include "productdictionary.h"
 
 #include <QInputDialog>
 #include <QLineEdit>
+#include <QMessageBox>
 
 #include <fstream>
 #include <iomanip>
@@ -118,9 +120,19 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
 
     if(ok && !text.isEmpty())
     {
-        // TODO check if is not in dictionary
-        auto new_ingredient = new Ingredient(text.toStdString());
-        tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
+        auto std_text { text.toStdString() };
+        if(!product_dict_ref.find(std_text))
+        {
+            auto new_ingredient = new Ingredient(std_text);
+            tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
+        }
+        else
+        {
+            QMessageBox error_message;
+            error_message.warning(0, "Error", "Product with such name already exists");
+            error_message.setFixedSize(500, 200);
+            error_message.show();
+        }
     }
 }
 
