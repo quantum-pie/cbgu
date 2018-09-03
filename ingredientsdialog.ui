@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IngredientsDialog</class>
+ <widget class="QMainWindow" name="IngredientsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="2">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="0" colspan="3">
+     <widget class="QTreeView" name="treeView"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuAction">
+    <property name="title">
+     <string>Action</string>
+    </property>
+    <addaction name="actionAdd_Root_Category"/>
+    <addaction name="actionAdd_Root_Ingredient"/>
+   </widget>
+   <addaction name="menuAction"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAdd_Root_Category">
+   <property name="text">
+    <string>Add Root Category</string>
+   </property>
+  </action>
+  <action name="actionAdd_Root_Ingredient">
+   <property name="text">
+    <string>Add Root Ingredient</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
