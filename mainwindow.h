@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "productdictionary.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,6 +22,7 @@ public:
 private:
     Ui::MainWindow *ui;
     IngredientsDialog *ingredients_dialog;
+    ProductDictionary dict;
 };
 
 #endif // MAINWINDOW_H

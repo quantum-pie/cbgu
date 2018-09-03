@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 #include "ingredientsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ingredients_dialog = new IngredientsDialog{ this };
+    ingredients_dialog = new IngredientsDialog{ dict, this };
     ingredients_dialog->show();
 }
 
