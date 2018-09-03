@@ -1,6 +1,5 @@
 #include "ingredienttreeitem.h"
 
-
 IngredientTreeItem::IngredientTreeItem(Ingredient * data)
         : item_data{ data } {}
 
@@ -46,4 +45,15 @@ bool IngredientTreeItem::is_editable(int) const
 bool IngredientTreeItem::is_category() const
 {
     return false;
+}
+
+json IngredientTreeItem::to_json() const
+{
+    json j;
+    j["type"] = "ingredient";
+    j["value"]["calories"] = item_data->get_calories();
+    j["value"]["proteins"] = item_data->get_proteins();
+    j["value"]["fats"] = item_data->get_fats();
+    j["value"]["carbohydrates"] = item_data->get_carbs();
+    return j;
 }

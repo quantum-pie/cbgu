@@ -22,3 +22,10 @@ bool CategoryTreeItem::is_category() const
 {
     return true;
 }
+
+json CategoryTreeItem::to_json() const
+{
+    json j;
+    j["type"] = "category";
+    return j;
+}

@@ -99,6 +99,21 @@ bool AbstractTreeItem::remove_child(int position)
     else return false;
 }
 
+json AbstractTreeItem::get_json() const
+{
+    auto sub_items = to_json();
+    for(auto child : child_items)
+    {
+        sub_items["value"].emplace(child->data(0).toString().toStdString(), child->get_json());
+    }
+    return sub_items;
+}
+
+json AbstractTreeItem::to_json() const
+{
+    return {};
+}
+
 bool AbstractTreeItem::is_editable(int column) const
 {
     return column == 0;

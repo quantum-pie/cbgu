@@ -28,3 +28,10 @@ bool RootTreeItem::is_category() const
 {
     return true;
 }
+
+json RootTreeItem::to_json() const
+{
+    json j;
+    j["type"] = "root";
+    return j;
+}

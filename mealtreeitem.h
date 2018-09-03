@@ -15,6 +15,8 @@ public:
     bool is_category() const override;
 
 private:
+    json to_json() const override;
+
     Meal * item_data;
 };
 

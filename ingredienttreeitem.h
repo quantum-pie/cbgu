@@ -16,6 +16,8 @@ public:
     bool is_category() const override;
 
 private:
+    json to_json() const override;
+
     Ingredient * item_data;
 };
 
