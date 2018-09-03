@@ -36,7 +36,8 @@ SOURCES += \
     ingredientsdialog.cpp \
     ingredienttreeitem.cpp \
     treeutils.cpp \
-    productdictionary.cpp
+    productdictionary.cpp \
+    mealsdialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,8 +53,10 @@ HEADERS += \
     ingredientsdialog.h \
     nlohmann/json.hpp \
     treeutils.h \
-    productdictionary.h
+    productdictionary.h \
+    mealsdialog.h
 
 FORMS += \
         mainwindow.ui \
-    ingredientsdialog.ui
+    ingredientsdialog.ui \
+    mealsdialog.ui
