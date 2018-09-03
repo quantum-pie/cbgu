@@ -27,5 +27,6 @@ json CategoryTreeItem::to_json() const
 {
     json j;
     j["type"] = "category";
+    j["value"] = nullptr;
     return j;
 }
