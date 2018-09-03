@@ -6,10 +6,9 @@
 #include <QMainWindow>
 #include <QModelIndex>
 
-#include <memory>
-
 class TreeModel;
 class Ingredient;
+class ProductDictionary;
 
 namespace Ui {
 class IngredientsDialog;
@@ -20,7 +19,7 @@ class IngredientsDialog : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit IngredientsDialog(QWidget * parent = nullptr);
+    explicit IngredientsDialog(ProductDictionary & dict, QWidget * parent = nullptr);
     ~IngredientsDialog();
 
 private slots:
@@ -42,6 +41,8 @@ private:
 
     TreeModel * tree_model;
     nlohmann::json tree_backend;
+
+    ProductDictionary & product_dict_ref;
 
     static const std::string tree_path;
 };

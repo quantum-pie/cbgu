@@ -4,21 +4,36 @@
 #include "treemodel.h"
 #include "categorytreeitem.h"
 #include "ingredienttreeitem.h"
+#include "treeutils.h"
 
 #include <QInputDialog>
 #include <QLineEdit>
+
+#include <fstream>
+#include <iomanip>
 
 using namespace nlohmann;
 
 const std::string IngredientsDialog::tree_path { "res/ingredients.tree" };
 
-IngredientsDialog::IngredientsDialog(QWidget *parent) :
-    QMainWindow{parent},
-    ui(new Ui::IngredientsDialog)
+IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) :
+    QMainWindow{ parent },
+    ui(new Ui::IngredientsDialog),
+    product_dict_ref{ dict }
 {
     ui->setupUi(this);
 
-    tree_model = new TreeModel(json{}, ui->treeView);
+    setWindowTitle("Ingredients Library");
+
+    std::ifstream tree_desc{ tree_path };
+    if(tree_desc.good())
+    {
+        tree_desc >> tree_backend;
+    }
+
+    tree_model = new TreeModel(ui->treeView);
+    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+
     ui->treeView->setModel(tree_model);
     for (int column = 0; column < tree_model->columnCount(); ++column)
         ui->treeView->resizeColumnToContents(column);
@@ -40,6 +55,9 @@ IngredientsDialog::IngredientsDialog(QWidget *parent) :
 
     connect(ui->actionAdd_Root_Category, SIGNAL(triggered()), this, SLOT(add_root_category_triggered()));
     connect(ui->actionAdd_Root_Ingredient, SIGNAL(triggered()), this, SLOT(add_root_ingredient_triggered()));
+
+    connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
+    connect(ui->cancel_button, SIGNAL(released()), this, SLOT(cancel_pressed()));
 }
 
 void IngredientsDialog::add_category_triggered()
@@ -82,7 +100,7 @@ void IngredientsDialog::add_root_ingredient_triggered()
 void IngredientsDialog::add_category(const QModelIndex & index)
 {
     bool ok;
-    QString text = QInputDialog::getText(this, tr("New category"),
+    auto text = QInputDialog::getText(this, tr("New category"),
                                          tr("Please enter new category name:"), QLineEdit::Normal,
                                          QString{}, &ok);
     if(ok && !text.isEmpty())
@@ -94,7 +112,7 @@ void IngredientsDialog::add_category(const QModelIndex & index)
 void IngredientsDialog::add_ingredient(const QModelIndex & index)
 {
     bool ok;
-    QString text = QInputDialog::getText(this, tr("New ingredient"),
+    auto text = QInputDialog::getText(this, tr("New ingredient"),
                                          tr("Please enter new ingredient name:"), QLineEdit::Normal,
                                          QString{}, &ok);
 
@@ -108,16 +126,19 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
 
 void IngredientsDialog::ok_pressed()
 {
-    // TODO Implement
+    tree_backend = tree_model->get_json();
+    close();
 }
 
 void IngredientsDialog::cancel_pressed()
 {
-    // TODO Implement
+    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+    close();
 }
 
 IngredientsDialog::~IngredientsDialog()
 {
-    // save tree
+    std::ofstream o(tree_path);
+    o << std::setw(4) << tree_backend << std::endl;
     delete ui;
 }
