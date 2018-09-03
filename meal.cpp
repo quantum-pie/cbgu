@@ -5,21 +5,42 @@ Meal::ingredients_container_type Meal::get_ingredients()
     return ingredients;
 }
 
-ProductParams Meal::calc_params(const ingredients_container_type& ingredients)
+double Meal::get_calories() const
 {
-    ProductParams res{ 0, 0, 0, 0 };
+    double res{ 0 };
     for(auto ingredient : ingredients)
     {
-        res.calories += ingredient->get_calories();
-        res.proteins += ingredient->get_proteins();
-        res.fats += ingredient->get_fats();
-        res.carbs += ingredient->get_carbs();
+        res += ingredient->get_calories();
     }
+    return res / ingredients.size();
+}
 
-    res.calories /= ingredients.size();
-    res.proteins /= ingredients.size();
-    res.fats /= ingredients.size();
-    res.carbs /= ingredients.size();
+double Meal::get_proteins() const
+{
+    double res{ 0 };
+    for(auto ingredient : ingredients)
+    {
+        res += ingredient->get_proteins();
+    }
+    return res / ingredients.size();
+}
 
-    return res;
+double Meal::get_fats() const
+{
+    double res{ 0 };
+    for(auto ingredient : ingredients)
+    {
+        res += ingredient->get_fats();
+    }
+    return res / ingredients.size();
+}
+
+double Meal::get_carbs() const
+{
+    double res{ 0 };
+    for(auto ingredient : ingredients)
+    {
+        res += ingredient->get_carbs();
+    }
+    return res / ingredients.size();
 }
