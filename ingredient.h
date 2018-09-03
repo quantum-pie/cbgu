@@ -4,14 +4,17 @@
 #include "abstractproduct.h"
 
 struct Ingredient : AbstractProduct
-{
+{   
     template<typename S>
     Ingredient(S&& name, double cal, double pro, double fat, double car)
         : AbstractProduct{ std::forward<S>(name) },
           params{ cal, pro, fat, car }
     {}
 
-    ~Ingredient() override = default;
+    template<typename S>
+    Ingredient(S&& name)
+        : Ingredient{ std::forward<S>(name), 0, 0, 0, 0 }
+    {}
 
     double get_calories() const override
     {
