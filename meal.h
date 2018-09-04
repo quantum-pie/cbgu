@@ -16,6 +16,8 @@ public:
           ingredients{ std::forward<A>(ingredients) }
     {}
 
+    Meal() : Meal{ "", ingredients_container_type{} } {}
+
     template<typename A>
     void set_ingredients(A&& new_ingredients)
     {
