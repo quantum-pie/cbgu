@@ -26,6 +26,7 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
     ui->setupUi(this);
 
     setWindowTitle("Ingredients Library");
+    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     std::ifstream tree_desc{ tree_path };
     if(tree_desc.good())
@@ -85,6 +86,9 @@ void IngredientsDialog::remove_item_triggered()
     auto index = ui->treeView->selectionModel()->currentIndex();
     if(index.isValid())
     {
+        if(!tree_model->is_category(index))
+            product_dict_ref.remove(index.data().toString());
+
         tree_model->remove_row(index.row(), index.parent());
     }
 }
@@ -121,10 +125,11 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
     if(ok && !text.isEmpty())
     {
         auto std_text { text.toStdString() };
-        if(!product_dict_ref.find(std_text))
+        if(!product_dict_ref.get(std_text))
         {
             auto new_ingredient = new Ingredient(std_text);
             tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
+            product_dict_ref.insert(new_ingredient);
         }
         else
         {
