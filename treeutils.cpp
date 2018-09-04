@@ -44,7 +44,7 @@ void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json &
             {
                 auto & ing_name = ing_it.key();
                 auto & ing_weight = ing_it.value();
-                ingredients.emplace_back(dict.find(ing_name), ing_weight);
+                ingredients.emplace_back(dict.get(ing_name), ing_weight);
             }
 
             auto new_meal = new Meal(name, ingredients);
