@@ -16,6 +16,8 @@ struct Ingredient : AbstractProduct
         : Ingredient{ std::forward<S>(name), 0, 0, 0, 0 }
     {}
 
+    Ingredient() : Ingredient{""} {}
+
     double get_calories() const override
     {
         return params.calories;
