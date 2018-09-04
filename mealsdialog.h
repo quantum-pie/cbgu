@@ -30,12 +30,14 @@ private slots:
     void remove_item_triggered();
     void add_root_category_triggered();
     void add_root_meal_triggered();
+    void edit_meal_triggered();
     void ok_pressed();
     void cancel_pressed();
 
 private:
     void add_category(const QModelIndex & index = QModelIndex{});
     void add_meal(const QModelIndex & index = QModelIndex{});
+    void edit_meal(Meal * meal);
 
     Ui::MealsDialog *ui;
 

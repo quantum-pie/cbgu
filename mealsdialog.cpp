@@ -6,6 +6,7 @@
 #include "mealtreeitem.h"
 #include "treeutils.h"
 #include "productdictionary.h"
+#include "mealingredientsdialog.h"
 
 #include <QInputDialog>
 #include <QLineEdit>
@@ -16,7 +17,7 @@
 
 using namespace nlohmann;
 
-const std::string IngredientsDialog::tree_path { "res/meals.tree" };
+const std::string MealsDialog::tree_path { "res/meals.tree" };
 
 MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     QMainWindow{ parent },
@@ -26,6 +27,7 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle("Meals Library");
+    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     std::ifstream tree_desc{ tree_path };
     if(tree_desc.good())
@@ -99,6 +101,22 @@ void MealsDialog::add_root_meal_triggered()
     add_meal();
 }
 
+void MealsDialog::edit_meal_triggered()
+{
+    auto index = ui->treeView->selectionModel()->currentIndex();
+    if(index.isValid())
+    {
+        // TODO bad encapsulation
+         auto meal = static_cast<Meal *>(tree_model->get_item(index));
+         MealIngredientsDialog meal_dlg{ product_dict_ref, meal };
+         int result = meal_dlg.exec();
+         if(result == QDialog::Accepted)
+         {
+            meal->set_ingredients(meal_dlg.get_ingredients());
+         }
+    }
+}
+
 void MealsDialog::add_category(const QModelIndex & index)
 {
     bool ok;
@@ -113,30 +131,13 @@ void MealsDialog::add_category(const QModelIndex & index)
 
 void MealsDialog::add_meal(const QModelIndex & index)
 {
-    // TODO create input table
-    /*
-    bool ok;
-    auto text = QInputDialog::getText(this, tr("New ingredient"),
-                                         tr("Please enter new ingredient name:"), QLineEdit::Normal,
-                                         QString{}, &ok);
-
-    if(ok && !text.isEmpty())
+    MealIngredientsDialog meal_dlg{ product_dict_ref };
+    int result = meal_dlg.exec();
+    if(result == QDialog::Accepted)
     {
-        auto std_text { text.toStdString() };
-        if(!product_dict_ref.find(std_text))
-        {
-            auto new_ingredient = new Ingredient(std_text);
-            tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
-        }
-        else
-        {
-            QMessageBox error_message;
-            error_message.warning(0, "Error", "Product with such name already exists");
-            error_message.setFixedSize(500, 200);
-            error_message.show();
-        }
+        auto new_meal = new Meal(meal_dlg.get_name(), meal_dlg.get_ingredients());
+        tree_model->insert_row(new_meal, 0, index);
     }
-    */
 }
 
 void MealsDialog::ok_pressed()
