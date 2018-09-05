@@ -7,6 +7,8 @@
 #include "meal.h"
 #include "productdictionary.h"
 
+#include <QMessageBox>
+
 namespace treeutils
 {
 
@@ -53,6 +55,39 @@ void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json &
             dict.insert(new_meal);
         }
     }
+}
+
+void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)
+{
+    auto std_old { old_name.toStdString() };
+    auto item = dict.get(std_old);
+    if(dict.get(item->get_name()))
+    {
+        /* revert */
+        item->set_name(std_old);
+        same_name_error();
+    }
+    else
+    {
+        dict.remove(old_name);
+        dict.insert(item);
+    }
+}
+
+void empty_name_error()
+{
+    QMessageBox error_message;
+    error_message.warning(nullptr, "Error", "Product name cannot be empty");
+    error_message.setFixedSize(500, 200);
+    error_message.show();
+}
+
+void same_name_error()
+{
+    QMessageBox error_message;
+    error_message.warning(nullptr, "Error", "Product with such name already exists");
+    error_message.setFixedSize(500, 200);
+    error_message.show();
 }
 
 }
