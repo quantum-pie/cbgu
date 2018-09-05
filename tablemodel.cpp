@@ -151,3 +151,15 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     emit dataChanged(index, index);
     return true;
 }
+
+json TableModel::get_json() const
+{
+    json j;
+    for(auto & product : product_list)
+    {
+        auto product_name = product.first->get_name();
+        if(product_dict_ref.get(product_name))
+            j[product_name] = product.second;
+    }
+    return j;
+}

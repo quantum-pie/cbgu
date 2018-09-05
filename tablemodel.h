@@ -39,6 +39,8 @@ public:
     bool insert_row(const AbstractProduct * row, int position, const QModelIndex &parent = QModelIndex());
     bool remove_row(int position, const QModelIndex &parent = QModelIndex());
 
+    json get_json() const;
+
 private:
     std::vector<std::pair<const AbstractProduct *, double>> product_list;
     const ProductDictionary & product_dict_ref;
