@@ -16,7 +16,7 @@ public:
     QAbstractItemModel * get_names();
 
 private:
-    std::unordered_map<std::string, AbstractProduct * > dict_backend;
+    std::unordered_map<std::string, AbstractProduct *> dict_backend;
     SortedNames sorted_names;
 };
 

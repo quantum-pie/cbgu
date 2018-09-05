@@ -32,7 +32,7 @@ json MealTreeItem::to_json() const
 {
     json ingredients;
     ingredients["type"] = "meal";
-    for(auto ingredient : item_data->get_ingredients())
+    for(auto& ingredient : item_data->get_ingredients())
     {
         ingredients["value"].emplace(ingredient.first->get_name(), ingredient.second);
     }

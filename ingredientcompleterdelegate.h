@@ -12,7 +12,7 @@ class IngredientCompleterDelegate : public QStyledItemDelegate
 public:
     IngredientCompleterDelegate(ProductDictionary & product_dict, QObject *parent = nullptr);
 
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const override;
 
     void setEditorData(QWidget *editor, const QModelIndex &index) const override;
