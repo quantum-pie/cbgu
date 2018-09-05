@@ -14,6 +14,7 @@ namespace treeutils
 
 void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json & j, const QModelIndex & index)
 {
+    // TODO check how it works on full tree
     int child_counter {0};
     for(auto it = j.begin(); it != j.end(); ++it)
     {
@@ -57,6 +58,11 @@ void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json &
     }
 }
 
+void rebuild_table(TableModel * tree_model, const json & j)
+{
+
+}
+
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)
 {
     auto std_old { old_name.toStdString() };
@@ -86,6 +92,14 @@ void same_name_error()
 {
     QMessageBox error_message;
     error_message.warning(nullptr, "Error", "Product with such name already exists");
+    error_message.setFixedSize(500, 200);
+    error_message.show();
+}
+
+void is_used_error(const QString & name)
+{
+    QMessageBox error_message;
+    error_message.critical(nullptr, "Error", "'" + name + "' meal use this ingredient - aborting removal");
     error_message.setFixedSize(500, 200);
     error_message.show();
 }
