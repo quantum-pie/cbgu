@@ -16,11 +16,12 @@
 
 using namespace nlohmann;
 
-const std::string IngredientsDialog::tree_path { "res/ingredients.tree" };
+const std::string IngredientsDialog::tree_path { "res/lib/ingredients.tree" };
 
 IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) :
     QMainWindow{ parent },
-    ui(new Ui::IngredientsDialog),
+    ui{ new Ui::IngredientsDialog },
+    search_meal_functor{ [](auto&){ return ""; } },
     product_dict_ref{ dict }
 {
     ui->setupUi(this);
@@ -100,10 +101,30 @@ void IngredientsDialog::remove_item_triggered()
     auto main_index = index.sibling(index.row(), 0);
     if(main_index.isValid())
     {
-        if(!tree_model->is_category(main_index))
-            product_dict_ref.remove(main_index.data().toString());
+        bool to_delete { false };
+        if(tree_model->is_category(main_index))
+        {
+            to_delete = !tree_model->hasChildren(main_index);
+        }
+        else
+        {
+            auto name { main_index.data().toString() };
+            auto meal_name { search_meal_functor(name.toStdString()) };
+            if(meal_name.empty())
+            {
+                to_delete = true;
+                product_dict_ref.remove(name);
+            }
+            else
+            {
+                treeutils::is_used_error(QString::fromStdString(meal_name));
+            }
+        }
 
-        tree_model->remove_row(main_index.row(), main_index.parent());
+        if(to_delete)
+        {
+            tree_model->remove_row(main_index.row(), main_index.parent());
+        }
     }
 }
 

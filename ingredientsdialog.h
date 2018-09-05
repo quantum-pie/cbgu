@@ -3,6 +3,8 @@
 
 #include "nlohmann/json.hpp"
 
+#include <functional>
+
 #include <QMainWindow>
 #include <QModelIndex>
 
@@ -21,6 +23,12 @@ class IngredientsDialog : public QMainWindow
 public:
     explicit IngredientsDialog(ProductDictionary & dict, QWidget * parent = nullptr);
     ~IngredientsDialog();
+
+    template<typename S>
+    void set_searcher(S&& functor)
+    {
+        search_meal_functor = std::forward<S>(functor);
+    }
 
 private slots:
     void add_category_triggered();
@@ -41,6 +49,8 @@ private:
 
     TreeModel * tree_model;
     nlohmann::json tree_backend;
+
+    std::function<std::string(const std::string&)> search_meal_functor;
 
     ProductDictionary & product_dict_ref;
 
