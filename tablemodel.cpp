@@ -21,8 +21,9 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
     if(role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant{};
 
-    auto item = product_list[index.row()].first;
-    auto weight = product_list[index.row()].second;
+    auto idx { static_cast<std::size_t>(index.row()) };
+    auto item = product_list[idx].first;
+    auto weight = product_list[idx].second;
 
     switch(index.column())
     {
@@ -46,7 +47,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     auto flg { QAbstractItemModel::flags(index) };
     if(index.column() == 0 || index.column() == 5)
@@ -130,17 +131,18 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     if(role != Qt::EditRole)
         return false;
 
+    auto idx { static_cast<std::size_t>(index.row()) };
     switch(index.column())
     {
     case 0:
         {
         auto item = product_dict_ref.get(value.toString().toStdString());
         if(item)
-            product_list[index.row()].first = item;
+            product_list[idx].first = item;
         break;
         }
     case 5:
-        product_list[index.row()].second = value.toDouble();
+        product_list[idx].second = value.toDouble();
         break;
     default:
         return false;
