@@ -17,7 +17,7 @@
 
 using namespace nlohmann;
 
-const std::string MealsDialog::tree_path { "res/meals.tree" };
+const std::string MealsDialog::tree_path { "res/lib/meals.tree" };
 
 MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     QMainWindow{ parent },
@@ -78,6 +78,34 @@ MealsDialog::~MealsDialog()
     delete ui;
 }
 
+std::string MealsDialog::is_used(const std::string & name, const QModelIndex & index) const
+{
+    if(tree_model->hasChildren(index))
+    {
+        std::string res;
+        for(int i = 0; i < tree_model->rowCount(index); ++i)
+        {
+            res = is_used(name, tree_model->index(i, 0, index));
+            if(!res.empty())
+                return res;
+        }
+        return res;
+    }
+    else
+    {
+        auto meal_name { index.data().toString().toStdString() };
+        auto item = static_cast<Meal *>(product_dict_ref.get(meal_name));
+        if(item)
+        {
+            for(auto& ingredient : item->get_ingredients())
+            {
+                if(ingredient.first->get_name() == name)
+                    return meal_name;
+            }
+        }
+        return "";
+    }
+}
 
 void MealsDialog::add_category_triggered()
 {

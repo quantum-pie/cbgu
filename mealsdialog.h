@@ -24,6 +24,8 @@ public:
     explicit MealsDialog(ProductDictionary & dict, QWidget *parent = nullptr);
     ~MealsDialog();
 
+    std::string is_used(const std::string & name, const QModelIndex & index = QModelIndex{}) const;
+
 private slots:
     void add_category_triggered();
     void add_meal_triggered();
