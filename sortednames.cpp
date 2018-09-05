@@ -12,13 +12,13 @@ QVariant SortedNames::data(const QModelIndex &index, int role) const
     if(role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant{};
 
-    return names[index.row()];
+    return names[static_cast<std::size_t>(index.row())];
 }
 
 bool SortedNames::insert_row(const QString & row)
 {
     auto it = std::upper_bound(names.begin(), names.end(), row);
-    int idx = it - names.begin();
+    auto idx = static_cast<int>(it - names.begin());
 
     beginInsertRows(QModelIndex{}, idx, idx);
 
@@ -44,7 +44,7 @@ bool SortedNames::remove_row(const QString & row)
         auto it_pair = std::equal_range(names.begin(), names.end(), row);
         if(it_pair.first != it_pair.second)
         {
-            int idx = it_pair.first - names.begin();
+            int idx = static_cast<int>(it_pair.first - names.begin());
             beginRemoveRows(QModelIndex{}, idx, idx);
             names.erase(it_pair.first);
             endRemoveRows();
@@ -56,6 +56,6 @@ bool SortedNames::remove_row(const QString & row)
 
 int SortedNames::rowCount(const QModelIndex &) const
 {
-    return names.size();
+    return static_cast<int>(names.size());
 }
 
