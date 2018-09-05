@@ -10,7 +10,7 @@ class MainWindow;
 }
 
 class IngredientsDialog;
-class MealIngredientsDialog;
+class MealsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -23,7 +23,7 @@ public:
 private:
     Ui::MainWindow *ui;
     IngredientsDialog *ingredients_dialog;
-    MealIngredientsDialog *meal_ingredients_dialog;
+    MealsDialog *meals_dialog;
     ProductDictionary dict;
 };
 
