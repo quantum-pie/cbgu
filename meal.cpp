@@ -1,6 +1,6 @@
 #include "meal.h"
 
-Meal::ingredients_container_type Meal::get_ingredients()
+Meal::ingredients_container_type Meal::get_ingredients() const
 {
     return ingredients;
 }
@@ -12,7 +12,7 @@ double Meal::get_calories() const
     {
         res += ingredient.first->get_calories() * ingredient.second;
     }
-    return 100 * res / total_weight();
+    return res / total_weight();
 }
 
 double Meal::get_proteins() const
@@ -22,7 +22,7 @@ double Meal::get_proteins() const
     {
         res += ingredient.first->get_proteins() * ingredient.second;
     }
-    return 100 * res / total_weight();
+    return res / total_weight();
 }
 
 double Meal::get_fats() const
@@ -32,7 +32,7 @@ double Meal::get_fats() const
     {
         res += ingredient.first->get_fats() * ingredient.second;
     }
-    return 100 * res / total_weight();
+    return res / total_weight();
 }
 
 double Meal::get_carbs() const
@@ -42,7 +42,7 @@ double Meal::get_carbs() const
     {
         res += ingredient.first->get_carbs() * ingredient.second;
     }
-    return 100 * res / total_weight();
+    return res / total_weight();
 }
 
 double Meal::total_weight() const

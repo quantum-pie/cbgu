@@ -29,7 +29,7 @@ public:
     double get_fats() const override;
     double get_carbs() const override;
 
-    ingredients_container_type get_ingredients();
+    ingredients_container_type get_ingredients() const;
     double total_weight() const;
 
 private:
