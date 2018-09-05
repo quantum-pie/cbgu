@@ -4,10 +4,12 @@
 #include "meal.h"
 #include "ingredientcompleterdelegate.h"
 #include "productdictionary.h"
+#include "treeutils.h"
 
 #include <QMenu>
 #include <QAction>
 #include <QMessageBox>
+#include <QPushButton>
 
 MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, const Meal * meal, QWidget * parent) :
     QDialog{ parent },
@@ -23,7 +25,9 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
 
     if(meal)
     {
-        for(auto ingredient : meal->get_ingredients())
+        ui->lineEdit->setText(QString::fromStdString(meal->get_name()));
+        name = meal->get_name();
+        for(auto& ingredient : meal->get_ingredients())
         {
             table_model->insert_row(ingredient.first, 0);
         }
@@ -40,6 +44,9 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_ingredient_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_ingredient_triggered()));
+
+    connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
+    connect(ui->cancel_button, SIGNAL(released()), this, SLOT(cancel_pressed()));
 }
 
 MealIngredientsDialog::~MealIngredientsDialog()
@@ -47,7 +54,7 @@ MealIngredientsDialog::~MealIngredientsDialog()
     delete ui;
 }
 
-std::string MealIngredientsDialog::get_ingredients() const
+Meal::ingredients_container_type MealIngredientsDialog::get_ingredients() const
 {
     return ingredients;
 }
@@ -73,15 +80,20 @@ void MealIngredientsDialog::remove_ingredient_triggered()
 
 void MealIngredientsDialog::ok_pressed()
 {
-    name = ui->lineEdit->text().toStdString();
-    if(!product_dict_ref.get(name))
+    auto new_name = ui->lineEdit->text().toStdString();
+    if(new_name.empty())
     {
+        treeutils::empty_name_error();
+    }
+    else if(name == new_name || !product_dict_ref.get(new_name))
+    {
+        name = new_name;
         for(int i = 0; i < table_model->rowCount(); ++i)
         {
             auto index = table_model->index(i, 0);
-            auto ing_name = table_model->data(index).toString();
+            auto ing_name = index.data().toString();
             index = table_model->index(i, 5);
-            auto weight = table_model->data(index).toDouble();
+            auto weight = index.data().toDouble();
             auto item = product_dict_ref.get(ing_name.toStdString());
             if(item)
             {
@@ -92,10 +104,7 @@ void MealIngredientsDialog::ok_pressed()
     }
     else
     {
-        QMessageBox error_message;
-        error_message.warning(0, "Error", "Product with such name already exists");
-        error_message.setFixedSize(500, 200);
-        error_message.show();
+        treeutils::same_name_error();
     }
 }
 
