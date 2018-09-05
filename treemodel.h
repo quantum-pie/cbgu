@@ -43,6 +43,10 @@ public:
 
     QModelIndex index(AbstractTreeItem * item) const;
 
+signals:
+    void which_data_changed(const QVariant & before,
+                            const QModelIndex & index);
+
 private:
     AbstractTreeItem * get_item(const QModelIndex &index) const;
     RootTreeItem root_item;

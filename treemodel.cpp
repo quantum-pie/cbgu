@@ -26,7 +26,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     auto flg { QAbstractItemModel::flags(index) };
     if(get_item(index)->is_editable(index.column()))
@@ -129,11 +129,18 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
         return false;
 
     auto item = get_item(index);
-    bool result = item->set_data(value, index.column());
+    auto prev = item->data(index.column());
 
-    if(result)
-        emit dataChanged(index, index);
-
+    bool result { true };
+    if(value != prev)
+    {
+        result = item->set_data(value, index.column());
+        if(result)
+        {
+            emit which_data_changed(prev, index);
+            emit dataChanged(index, index);
+        }
+    }
     return result;
 }
 
