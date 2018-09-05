@@ -47,47 +47,68 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
 
     auto add_category_action = new QAction("Add Category", tree_context_menu);
     auto add_meal_action = new QAction("Add Meal", tree_context_menu);
+    auto edit_meal_action = new QAction("Edit Meal", tree_context_menu);
     auto remove_item_action = new QAction("Remove Item", tree_context_menu);
 
     ui->treeView->addAction(add_category_action);
     ui->treeView->addAction(add_meal_action);
+    ui->treeView->addAction(edit_meal_action);
     ui->treeView->addAction(remove_item_action);
 
     connect(add_category_action, SIGNAL(triggered()), this, SLOT(add_category_triggered()));
     connect(add_meal_action, SIGNAL(triggered()), this, SLOT(add_meal_triggered()));
     connect(remove_item_action, SIGNAL(triggered()), this, SLOT(remove_item_triggered()));
+    connect(edit_meal_action, SIGNAL(triggered()), this, SLOT(edit_meal_triggered()));
 
     connect(ui->actionAdd_Root_Category, SIGNAL(triggered()), this, SLOT(add_root_category_triggered()));
     connect(ui->actionAdd_Root_Meal, SIGNAL(triggered()), this, SLOT(add_root_meal_triggered()));
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
     connect(ui->cancel_button, SIGNAL(released()), this, SLOT(cancel_pressed()));
+
+    connect(tree_model, SIGNAL(which_data_changed(const QVariant &,
+                                                  const QModelIndex &)), this, SLOT(check_data_change(const QVariant &,
+                                                                                                      const QModelIndex &)));
 }
+
+MealsDialog::~MealsDialog()
+{
+    std::ofstream o(tree_path);
+    o << std::setw(4) << tree_backend << std::endl;
+    delete ui;
+}
+
 
 void MealsDialog::add_category_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(tree_model->is_category(index))
+    auto main_index = index.sibling(index.row(), 0);
+    if(tree_model->is_category(main_index))
     {
-        add_category(index);
+        add_category(main_index);
     }
 }
 
 void MealsDialog::add_meal_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(tree_model->is_category(index))
+    auto main_index = index.sibling(index.row(), 0);
+    if(tree_model->is_category(main_index))
     {
-        add_meal(index);
+        add_meal(main_index);
     }
 }
 
 void MealsDialog::remove_item_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(index.isValid())
+    auto main_index = index.sibling(index.row(), 0);
+    if(main_index.isValid())
     {
-        tree_model->remove_row(index.row(), index.parent());
+        if(!tree_model->is_category(main_index))
+            product_dict_ref.remove(main_index.data().toString());
+
+        tree_model->remove_row(main_index.row(), main_index.parent());
     }
 }
 
@@ -104,16 +125,18 @@ void MealsDialog::add_root_meal_triggered()
 void MealsDialog::edit_meal_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(index.isValid())
+    auto main_index = index.sibling(index.row(), 0);
+    if(main_index.isValid() && !tree_model->is_category(main_index))
     {
-        // TODO bad encapsulation
-         auto meal = static_cast<Meal *>(tree_model->get_item(index));
-         MealIngredientsDialog meal_dlg{ product_dict_ref, meal };
-         int result = meal_dlg.exec();
-         if(result == QDialog::Accepted)
-         {
+        auto name = main_index.data().toString().toStdString();
+        auto meal = static_cast<Meal *>(product_dict_ref.get(name));
+        MealIngredientsDialog meal_dlg{ product_dict_ref, meal };
+        int result = meal_dlg.exec();
+        if(result == QDialog::Accepted)
+        {
+            meal->set_name(meal_dlg.get_name());
             meal->set_ingredients(meal_dlg.get_ingredients());
-         }
+        }
     }
 }
 
@@ -136,7 +159,9 @@ void MealsDialog::add_meal(const QModelIndex & index)
     if(result == QDialog::Accepted)
     {
         auto new_meal = new Meal(meal_dlg.get_name(), meal_dlg.get_ingredients());
-        tree_model->insert_row(new_meal, 0, index);
+        auto new_tree_item = new MealTreeItem(new_meal);
+        tree_model->insert_row(new_tree_item, 0, index);
+        product_dict_ref.insert(new_meal);
     }
 }
 
@@ -152,9 +177,12 @@ void MealsDialog::cancel_pressed()
     close();
 }
 
-MealsDialog::~MealsDialog()
+void MealsDialog::check_data_change(const QVariant & before,
+                       const QModelIndex & index)
 {
-    std::ofstream o(tree_path);
-    o << std::setw(4) << tree_backend << std::endl;
-    delete ui;
+    if(index.column() == 0 && !tree_model->is_category(index))
+    {
+        treeutils::dictionary_item_renamed(product_dict_ref, before.toString());
+    }
 }
+
