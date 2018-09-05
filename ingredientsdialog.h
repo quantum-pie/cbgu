@@ -30,6 +30,8 @@ private slots:
     void add_root_ingredient_triggered();
     void ok_pressed();
     void cancel_pressed();
+    void check_data_change(const QVariant & before,
+                           const QModelIndex & index);
 
 private:
     void add_category(const QModelIndex & index = QModelIndex{});

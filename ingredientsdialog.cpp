@@ -61,35 +61,49 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
     connect(ui->cancel_button, SIGNAL(released()), this, SLOT(cancel_pressed()));
+
+    connect(tree_model, SIGNAL(which_data_changed(const QVariant &,
+                                                  const QModelIndex &)), this, SLOT(check_data_change(const QVariant &,
+                                                                                                      const QModelIndex &)));
+}
+
+IngredientsDialog::~IngredientsDialog()
+{
+    std::ofstream o(tree_path);
+    o << std::setw(4) << tree_backend << std::endl;
+    delete ui;
 }
 
 void IngredientsDialog::add_category_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(tree_model->is_category(index))
+    auto main_index = index.sibling(index.row(), 0);
+    if(tree_model->is_category(main_index))
     {
-        add_category(index);
+        add_category(main_index);
     }
 }
 
 void IngredientsDialog::add_ingredient_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(tree_model->is_category(index))
+    auto main_index = index.sibling(index.row(), 0);
+    if(tree_model->is_category(main_index))
     {
-        add_ingredient(index);
+        add_ingredient(main_index);
     }
 }
 
 void IngredientsDialog::remove_item_triggered()
 {
     auto index = ui->treeView->selectionModel()->currentIndex();
-    if(index.isValid())
+    auto main_index = index.sibling(index.row(), 0);
+    if(main_index.isValid())
     {
-        if(!tree_model->is_category(index))
-            product_dict_ref.remove(index.data().toString());
+        if(!tree_model->is_category(main_index))
+            product_dict_ref.remove(main_index.data().toString());
 
-        tree_model->remove_row(index.row(), index.parent());
+        tree_model->remove_row(main_index.row(), main_index.parent());
     }
 }
 
@@ -122,10 +136,14 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
                                          tr("Please enter new ingredient name:"), QLineEdit::Normal,
                                          QString{}, &ok);
 
-    if(ok && !text.isEmpty())
+    if(ok)
     {
         auto std_text { text.toStdString() };
-        if(!product_dict_ref.get(std_text))
+        if(std_text.empty())
+        {
+            treeutils::empty_name_error();
+        }
+        else if(!product_dict_ref.get(std_text))
         {
             auto new_ingredient = new Ingredient(std_text);
             tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
@@ -133,10 +151,7 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
         }
         else
         {
-            QMessageBox error_message;
-            error_message.warning(0, "Error", "Product with such name already exists");
-            error_message.setFixedSize(500, 200);
-            error_message.show();
+            treeutils::same_name_error();
         }
     }
 }
@@ -153,9 +168,12 @@ void IngredientsDialog::cancel_pressed()
     close();
 }
 
-IngredientsDialog::~IngredientsDialog()
+void IngredientsDialog::check_data_change(const QVariant & before,
+                       const QModelIndex & index)
 {
-    std::ofstream o(tree_path);
-    o << std::setw(4) << tree_backend << std::endl;
-    delete ui;
+    if(index.column() == 0 && !tree_model->is_category(index))
+    {
+        treeutils::dictionary_item_renamed(product_dict_ref, before.toString());
+    }
 }
+
