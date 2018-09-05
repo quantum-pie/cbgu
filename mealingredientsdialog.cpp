@@ -17,6 +17,9 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
     product_dict_ref{ product_dict }
 {
     ui->setupUi(this);
+
+    setWindowTitle("Edit Meal");
+
     table_model = new TableModel(product_dict, ui->tableView);
     ui->tableView->setModel(table_model);
 
