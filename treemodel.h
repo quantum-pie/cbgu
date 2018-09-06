@@ -5,6 +5,8 @@
 
 #include "nlohmann/json.hpp"
 
+#include <deque>
+
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
@@ -43,13 +45,23 @@ public:
 
     QModelIndex index(AbstractTreeItem * item) const;
 
+    void clear();
+    void apply(bool confirmed);
+    void weak_delete(const QModelIndex &index);
+    void weak_add(AbstractTreeItem * item, const QModelIndex &index);
+
 signals:
     void which_data_changed(const QVariant & before,
                             const QModelIndex & index);
 
+    void row_hard_removed(const QModelIndex &index);
+
 private:
     AbstractTreeItem * get_item(const QModelIndex &index) const;
     RootTreeItem root_item;
+
+    std::deque<AbstractTreeItem *> die_if_confirmed;
+    std::deque<AbstractTreeItem *> die_if_rejected;
 };
 
 #endif // TREEMODEL_H

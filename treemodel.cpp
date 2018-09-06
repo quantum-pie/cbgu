@@ -28,8 +28,20 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     if(!index.isValid())
         return Qt::NoItemFlags;
 
+    auto item = get_item(index);
+    while(item != &root_item)
+    {
+        auto it = std::find(die_if_confirmed.begin(), die_if_confirmed.end(), item);
+        if(it != die_if_confirmed.end())
+        {
+            return Qt::NoItemFlags;
+        }
+        item = item->parent();
+    }
+
+    item = get_item(index);
     auto flg { QAbstractItemModel::flags(index) };
-    if(get_item(index)->is_editable(index.column()))
+    if(item->is_editable(index.column()))
         return Qt::ItemIsEditable | flg;
     else return flg;
 }
@@ -147,4 +159,39 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int rol
 json TreeModel::get_json() const
 {
     return root_item.get_json();
+}
+
+void TreeModel::clear()
+{
+    while(hasChildren())
+    {
+        root_item.remove_child(0);
+    }
+}
+
+void TreeModel::apply(bool confirmed)
+{
+    auto& container = confirmed ? die_if_confirmed : die_if_rejected;
+    for(auto item : container)
+    {
+        auto idx = index(item);
+        if(remove_row(idx.row(), idx.parent()))
+        {
+            emit row_hard_removed(idx);
+        }
+    }
+
+    die_if_confirmed.clear();
+    die_if_rejected.clear();
+}
+
+void TreeModel::weak_delete(const QModelIndex &index)
+{
+    die_if_confirmed.push_back(get_item(index));
+}
+
+void TreeModel::weak_add(AbstractTreeItem * item, const QModelIndex &index)
+{
+    insert_row(item, 0, index);
+    die_if_rejected.push_front(item);
 }
