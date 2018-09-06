@@ -1,5 +1,6 @@
 #include "treeutils.h"
 #include "treemodel.h"
+#include "tablemodel.h"
 #include "categorytreeitem.h"
 #include "ingredienttreeitem.h"
 #include "mealtreeitem.h"
@@ -13,9 +14,8 @@
 namespace treeutils
 {
 
-TreeModel * rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json & j, const QModelIndex & index)
+TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const json & j, const QModelIndex & index)
 {
-    // TODO check how it works on full tree
     int child_counter {0};
     for(auto it = j.begin(); it != j.end(); ++it)
     {
@@ -27,7 +27,7 @@ TreeModel * rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const
         {
             auto new_category = new CategoryTreeItem(name);
             tree_model->insert_row(new_category, child_counter++, index);
-            rebuild_tree(tree_model, dict, value, tree_model->index(new_category));
+            build_tree(tree_model, dict, value, tree_model->index(new_category));
         }
         else if(type == "ingredient")
         {
@@ -57,11 +57,24 @@ TreeModel * rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const
             dict.insert(new_meal);
         }
     }
+
+    return tree_model;
 }
 
-TableModel * rebuild_table(TableModel * tree_model, const json & j)
+TableModel * build_table(TableModel * table_model, ProductDictionary & dict, const json & j)
 {
-
+    int rows {0};
+    for(auto it = j.begin(); it != j.end(); ++it)
+    {
+        auto item = dict.get(it.key());
+        if(item)
+        {
+            table_model->insert_row(item, rows);
+            table_model->setData(table_model->index(rows, 5), it->get<double>());
+            rows++;
+        }
+    }
+    return table_model;
 }
 
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)
@@ -101,6 +114,14 @@ void is_used_error(const QString & name)
 {
     QMessageBox error_message;
     error_message.critical(nullptr, "Error", "'" + name + "' meal use this ingredient - aborting removal");
+    error_message.setFixedSize(500, 200);
+    error_message.show();
+}
+
+void is_added_error()
+{
+    QMessageBox error_message;
+    error_message.warning(nullptr, "Error", "Product with such name already added to the list");
     error_message.setFixedSize(500, 200);
     error_message.show();
 }
