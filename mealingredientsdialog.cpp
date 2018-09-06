@@ -45,7 +45,7 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);
 
-    connect(add_ingredient_action, SIGNAL(triggeed()), this, SLOT(add_ingredient_triggered()));
+    connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_ingredient_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_ingredient_triggered()));
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
