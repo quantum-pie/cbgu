@@ -180,11 +180,10 @@ void MainWindow::push_tables(std::size_t user_id, const QDate & date)
         std::transform(daily_user_tables.begin(), daily_user_tables.end(),
                        j.begin(), daily_user_tables.begin(), std::move(rebuild_functor));
 
-        std::for_each(j.begin(), j.end(),
-        [this](auto & j_it)
+        for(auto& j_el : j)
         {
-            ui->comboBox_meal->addItem(QString::fromStdString(j_it["name"]));
-        });
+            ui->comboBox_meal->addItem(QString::fromStdString(j_el["name"]));
+        }
     }
 
     ui->comboBox_meal->blockSignals(false);
