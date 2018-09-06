@@ -1,6 +1,7 @@
 #include "tablemodel.h"
 #include "meal.h"
 #include "productdictionary.h"
+#include "treeutils.h"
 
 const double TableModel::default_weight { 100 };
 
@@ -138,7 +139,15 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         {
         auto item = product_dict_ref.get(value.toString().toStdString());
         if(item)
-            product_list[idx].first = item;
+        {
+            auto it = std::find_if(product_list.begin(), product_list.end(),
+            [item](auto & ex_prod)
+            {
+                return ex_prod.first == item;
+            });
+            if(it == product_list.end())
+                product_list[idx].first = item;
+        }
         break;
         }
     case 5:
