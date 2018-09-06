@@ -32,6 +32,9 @@ private slots:
     void remove_product_triggered();
 
 private:
+    void pull_tables(std::size_t user_id, const QDate & date);
+    void push_tables(std::size_t user_id, const QDate & date);
+
     Ui::MainWindow * ui;
     IngredientsDialog * ingredients_dialog;
     MealsDialog * meals_dialog;
