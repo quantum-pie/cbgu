@@ -36,7 +36,15 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
     }
 
     tree_model = new TreeModel(ui->treeView);
-    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+    treeutils::build_tree(tree_model, product_dict_ref, tree_backend["value"]);
+
+    connect(
+        tree_model, &TreeModel::row_hard_removed,
+        [this](const QModelIndex & index)
+        {
+            product_dict_ref.remove(index.data().toString());
+        }
+    );
 
     ui->treeView->setModel(tree_model);
     for (int column = 0; column < tree_model->columnCount(); ++column)
@@ -102,28 +110,21 @@ void IngredientsDialog::remove_item_triggered()
     if(main_index.isValid())
     {
         bool to_delete { false };
-        if(tree_model->is_category(main_index))
+        auto name { main_index.data().toString() };
+        auto meal_name { search_meal_functor(name.toStdString()) };
+        if(meal_name.empty())
         {
-            to_delete = !tree_model->hasChildren(main_index);
+            to_delete = true;
+            product_dict_ref.remove(name);
         }
         else
         {
-            auto name { main_index.data().toString() };
-            auto meal_name { search_meal_functor(name.toStdString()) };
-            if(meal_name.empty())
-            {
-                to_delete = true;
-                product_dict_ref.remove(name);
-            }
-            else
-            {
-                treeutils::is_used_error(QString::fromStdString(meal_name));
-            }
+            treeutils::is_used_error(QString::fromStdString(meal_name));
         }
 
         if(to_delete)
         {
-            tree_model->remove_row(main_index.row(), main_index.parent());
+            tree_model->weak_delete(main_index);
         }
     }
 }
@@ -146,7 +147,7 @@ void IngredientsDialog::add_category(const QModelIndex & index)
                                          QString{}, &ok);
     if(ok && !text.isEmpty())
     {
-        tree_model->insert_row(new CategoryTreeItem(text.toStdString()), 0, index);
+        tree_model->weak_add(new CategoryTreeItem(text.toStdString()), index);
     }
 }
 
@@ -167,7 +168,7 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
         else if(!product_dict_ref.get(std_text))
         {
             auto new_ingredient = new Ingredient(std_text);
-            tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
+            tree_model->weak_add(new IngredientTreeItem(new_ingredient), index);
             product_dict_ref.insert(new_ingredient);
         }
         else
@@ -179,13 +180,14 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
 
 void IngredientsDialog::ok_pressed()
 {
+    tree_model->apply(true);
     tree_backend = tree_model->get_json();
     close();
 }
 
 void IngredientsDialog::cancel_pressed()
 {
-    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+    tree_model->apply(false);
     close();
 }
 

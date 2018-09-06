@@ -36,7 +36,15 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     }
 
     tree_model = new TreeModel(ui->treeView);
-    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+    treeutils::build_tree(tree_model, product_dict_ref, tree_backend["value"]);
+
+    connect(
+        tree_model, &TreeModel::row_hard_removed,
+        [this](const QModelIndex & index)
+        {
+            product_dict_ref.remove(index.data().toString());
+        }
+    );
 
     ui->treeView->setModel(tree_model);
     for (int column = 0; column < tree_model->columnCount(); ++column)
@@ -136,7 +144,7 @@ void MealsDialog::remove_item_triggered()
         if(!tree_model->is_category(main_index))
             product_dict_ref.remove(main_index.data().toString());
 
-        tree_model->remove_row(main_index.row(), main_index.parent());
+        tree_model->weak_delete(main_index);
     }
 }
 
@@ -176,7 +184,7 @@ void MealsDialog::add_category(const QModelIndex & index)
                                          QString{}, &ok);
     if(ok && !text.isEmpty())
     {
-        tree_model->insert_row(new CategoryTreeItem(text.toStdString()), 0, index);
+        tree_model->weak_add(new CategoryTreeItem(text.toStdString()), index);
     }
 }
 
@@ -187,21 +195,21 @@ void MealsDialog::add_meal(const QModelIndex & index)
     if(result == QDialog::Accepted)
     {
         auto new_meal = new Meal(meal_dlg.get_name(), meal_dlg.get_ingredients());
-        auto new_tree_item = new MealTreeItem(new_meal);
-        tree_model->insert_row(new_tree_item, 0, index);
+        tree_model->weak_add(new MealTreeItem(new_meal), index);
         product_dict_ref.insert(new_meal);
     }
 }
 
 void MealsDialog::ok_pressed()
 {
+    tree_model->apply(true);
     tree_backend = tree_model->get_json();
     close();
 }
 
 void MealsDialog::cancel_pressed()
 {
-    treeutils::rebuild_tree(tree_model, product_dict_ref, tree_backend["value"]);
+    tree_model->apply(false);
     close();
 }
 
