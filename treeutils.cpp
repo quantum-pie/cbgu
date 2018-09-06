@@ -8,11 +8,12 @@
 #include "productdictionary.h"
 
 #include <QMessageBox>
+#include <QDate>
 
 namespace treeutils
 {
 
-void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json & j, const QModelIndex & index)
+TreeModel * rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json & j, const QModelIndex & index)
 {
     // TODO check how it works on full tree
     int child_counter {0};
@@ -58,7 +59,7 @@ void rebuild_tree(TreeModel * tree_model, ProductDictionary & dict, const json &
     }
 }
 
-void rebuild_table(TableModel * tree_model, const json & j)
+TableModel * rebuild_table(TableModel * tree_model, const json & j)
 {
 
 }
@@ -102,6 +103,13 @@ void is_used_error(const QString & name)
     error_message.critical(nullptr, "Error", "'" + name + "' meal use this ingredient - aborting removal");
     error_message.setFixedSize(500, 200);
     error_message.show();
+}
+
+std::string date_to_string(const QDate & date)
+{
+    return std::to_string(date.day()) + '_' +
+           std::to_string(date.month()) + '_' +
+           std::to_string(date.year());
 }
 
 }
