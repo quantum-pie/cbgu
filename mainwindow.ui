@@ -87,26 +87,6 @@
        <property name="editable">
         <bool>true</bool>
        </property>
-       <item>
-        <property name="text">
-         <string>Breakfast</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Lunch</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Dinner</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Snack</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>

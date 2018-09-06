@@ -32,6 +32,8 @@ private slots:
     void remove_product_triggered();
 
 private:
+    void switch_tables(std::size_t first_user_id, const QDate & first_date,
+                       std::size_t second_user_id, const QDate & second_date);
     void pull_tables(std::size_t user_id, const QDate & date);
     void push_tables(std::size_t user_id, const QDate & date);
 
@@ -41,9 +43,10 @@ private:
 
     QStringList default_meals;
     ProductDictionary dict;
-    std::vector<std::vector<TableModel *>> daily_user_tables;
+    std::vector<TableModel *> daily_user_tables;
     TableModel * current_model;
     QDate prev_date;
+    std::size_t prev_user;
 
     static const std::string user_data_path;
 };
