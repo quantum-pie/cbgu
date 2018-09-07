@@ -8,6 +8,7 @@
 #include "treeutils.h"
 
 #include <QDirIterator>
+#include <QLineEdit>
 
 #include <fstream>
 #include <iomanip>
@@ -17,6 +18,7 @@ const std::string MainWindow::user_data_path { "res/usr/" };
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow{ parent },
     ui{ new Ui::MainWindow },
+    current_model{ nullptr },
     prev_date{ QDate::currentDate() },
     prev_user{ -1 }, user_count{ 0 }
 {
@@ -68,6 +70,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_product_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_product_triggered()));
+
+    connect(ui->calories_sb, SIGNAL(valueChanged(int)), this, SLOT(calories_norm_changed(int)));
+    connect(ui->proteins_sb, SIGNAL(valueChanged(int)), this, SLOT(proteins_norm_changed(int)));
+    connect(ui->fats_sb, SIGNAL(valueChanged(int)), this, SLOT(fats_norm_changed(int)));
+    connect(ui->carbs_sb, SIGNAL(valueChanged(int)), this, SLOT(carbs_norm_changed(int)));
 }
 
 MainWindow::~MainWindow()
@@ -89,15 +96,6 @@ void MainWindow::switch_or_add_user(int user_id)
         QDir user_data_dir { QString::fromStdString(user_data_path) };
         auto new_user_name = ui->comboBox_user->currentText();
         user_data_dir.mkdir(new_user_name);
-
-        json norm_j;
-        norm_j["calories"] = 0;
-        norm_j["proteins"] = 0;
-        norm_j["fats"] = 0;
-        norm_j["carbohydrates"] = 0;
-
-        std::ofstream daily_norm(user_data_path + '/' + new_user_name.toStdString() + '/' + "daily_norm.dat");
-        daily_norm << std::setw(4) << norm_j;
     }
 
     auto current_date = ui->dateEdit->date();
@@ -113,6 +111,15 @@ void MainWindow::switch_or_add_meal(int meal_id)
     }
 
     current_model = daily_user_tables[static_cast<std::size_t>(meal_id)];
+    table_updated();
+
+    connect(current_model, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+            this, SLOT(table_updated()));
+    connect(current_model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(table_updated()));
+    connect(current_model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this, SLOT(table_updated()));
+
     ui->tableView->setModel(current_model);
 }
 
@@ -138,6 +145,58 @@ void MainWindow::remove_product_triggered()
     }
 }
 
+void MainWindow::table_updated()
+{
+    ProductParams summary {0, 0, 0, 0};
+    for(auto table : daily_user_tables)
+    {
+        summary += table->summary();
+    }
+
+    ui->calories_le->setText(QString::number(static_cast<unsigned>(summary.calories)));
+    ui->proteins_le->setText(QString::number(static_cast<unsigned>(summary.proteins)));
+    ui->fats_le->setText(QString::number(static_cast<unsigned>(summary.fats)));
+    ui->carbs_le->setText(QString::number(static_cast<unsigned>(summary.carbs)));
+
+    update_status(ui->calories_le, ui->calories_sb->value());
+    update_status(ui->proteins_le, ui->proteins_sb->value());
+    update_status(ui->fats_le, ui->fats_sb->value());
+    update_status(ui->carbs_le, ui->carbs_sb->value());
+}
+
+void MainWindow::calories_norm_changed(int norm)
+{
+    update_status(ui->calories_le, norm);
+}
+
+void MainWindow::proteins_norm_changed(int norm)
+{
+    update_status(ui->proteins_le, norm);
+}
+
+void MainWindow::fats_norm_changed(int norm)
+{
+    update_status(ui->fats_le, norm);
+}
+
+void MainWindow::carbs_norm_changed(int norm)
+{
+    update_status(ui->carbs_le, norm);
+}
+
+void MainWindow::update_status(QLineEdit * le, int norm)
+{
+    QPalette palette;
+    palette.setColor(QPalette::Text, Qt::black);
+    auto current_value { le->text().toInt() };
+    if(current_value > norm)
+        palette.setColor(QPalette::Base, Qt::red);
+    else
+        palette.setColor(QPalette::Base, Qt::white);
+
+    le->setPalette(palette);
+}
+
 void MainWindow::pull_tables(int user_id, const QDate & date)
 {
     if(user_id != -1)
@@ -160,6 +219,17 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
 
         ui->comboBox_meal->clear();
         ui->comboBox_meal->blockSignals(false);
+
+        path = user_data_path + user_name + '/' + "daily_norm.dat";
+        std::ofstream o_norm { path };
+
+        json norm_j;
+        norm_j["calories"] = ui->calories_sb->value();
+        norm_j["proteins"] = ui->proteins_sb->value();
+        norm_j["fats"] = ui->fats_sb->value();
+        norm_j["carbohydrates"] = ui->carbs_sb->value();
+
+        o_norm << std::setw(4) << norm_j;
     }
 }
 
@@ -205,6 +275,19 @@ void MainWindow::push_tables(int user_id, const QDate & date)
 
     ui->comboBox_meal->blockSignals(false);
     switch_or_add_meal(ui->comboBox_meal->currentIndex());
+
+    path = user_data_path + user_name + '/' + "daily_norm.dat";
+    std::ifstream o_norm { path };
+    if(o_norm.good())
+    {
+        json j_norm;
+        o_norm >> j_norm;
+
+        ui->calories_sb->setValue(j_norm["calories"]);
+        ui->proteins_sb->setValue(j_norm["proteins"]);
+        ui->fats_sb->setValue(j_norm["fats"]);
+        ui->carbs_sb->setValue(j_norm["carbohydrates"]);
+    }
 }
 
 void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
@@ -213,5 +296,4 @@ void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
     pull_tables(first_user_id, first_date);
     push_tables(second_user_id, second_date);
 }
-
 

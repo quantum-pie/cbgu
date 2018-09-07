@@ -15,6 +15,7 @@ class MainWindow;
 class IngredientsDialog;
 class MealsDialog;
 class TableModel;
+class QLineEdit;
 
 class MainWindow : public QMainWindow
 {
@@ -30,12 +31,19 @@ private slots:
     void switch_date(const QDate & new_date);
     void add_product_triggered();
     void remove_product_triggered();
+    void table_updated();
+    void calories_norm_changed(int norm);
+    void proteins_norm_changed(int norm);
+    void fats_norm_changed(int norm);
+    void carbs_norm_changed(int norm);
 
 private:
     void switch_tables(int first_user_id, const QDate & first_date,
                        int second_user_id, const QDate & second_date);
     void pull_tables(int user_id, const QDate & date);
     void push_tables(int user_id, const QDate & date);
+
+    void update_status(QLineEdit * le, int norm);
 
     Ui::MainWindow * ui;
     IngredientsDialog * ingredients_dialog;
