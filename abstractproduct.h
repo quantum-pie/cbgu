@@ -9,6 +9,25 @@ struct ProductParams
     double proteins;
     double fats;
     double carbs;
+
+    ProductParams operator+(const ProductParams & other)
+    {
+        return
+        {
+            calories + other.calories,
+            proteins + other.proteins,
+            fats + other.fats,
+            carbs + other.carbs
+        };
+    }
+
+    void operator+=(const ProductParams & other)
+    {
+        calories += other.calories;
+        proteins += other.proteins;
+        fats += other.fats;
+        carbs += other.carbs;
+    }
 };
 
 struct AbstractProduct
