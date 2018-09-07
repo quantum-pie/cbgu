@@ -30,11 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
     auto completer_delegate = new IngredientCompleterDelegate(dict, ui->tableView);
     ui->tableView->setItemDelegate(completer_delegate);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    //ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ingredients_dialog = new IngredientsDialog{ dict };
     meals_dialog = new MealsDialog{ dict };
     ingredients_dialog->set_searcher([this](auto& name) { return meals_dialog->is_used(name); } );
+
+    connect(ingredients_dialog, SIGNAL(closed()), this, SLOT(reload_tables()));
+    connect(meals_dialog, SIGNAL(closed()), this, SLOT(reload_tables()));
 
     default_meals << tr("Breakfast") << tr("Lunch") << tr("Dinner") << tr("Snack");
 
@@ -63,8 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
     auto table_context_menu = new QMenu(ui->tableView);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    auto add_ingredient_action = new QAction(tr("Add Product"), table_context_menu);
-    auto remove_ingredient_action = new QAction(tr("Remove Product"), table_context_menu);
+    auto add_ingredient_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Product"), table_context_menu);
+    auto remove_ingredient_action = new QAction(QIcon(":/icons/icons/garbage.png"), tr("Remove Product"), table_context_menu);
 
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);
@@ -218,9 +220,6 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
         }
         o << std::setw(4) << j;
 
-        ui->comboBox_meal->clear();
-        ui->comboBox_meal->blockSignals(false);
-
         path = user_data_path + user_name + '/' + "daily_norm.dat";
         std::ofstream o_norm { path };
 
@@ -231,6 +230,9 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
         norm_j["carbohydrates"] = ui->carbs_sb->value();
 
         o_norm << std::setw(4) << norm_j;
+
+        ui->comboBox_meal->clear();
+        ui->comboBox_meal->blockSignals(false);
     }
 }
 
@@ -274,9 +276,6 @@ void MainWindow::push_tables(int user_id, const QDate & date)
         }
     }
 
-    ui->comboBox_meal->blockSignals(false);
-    switch_or_add_meal(ui->comboBox_meal->currentIndex());
-
     path = user_data_path + user_name + '/' + "daily_norm.dat";
     std::ifstream o_norm { path };
     if(o_norm.good())
@@ -289,6 +288,9 @@ void MainWindow::push_tables(int user_id, const QDate & date)
         ui->fats_sb->setValue(j_norm["fats"]);
         ui->carbs_sb->setValue(j_norm["carbohydrates"]);
     }
+
+    ui->comboBox_meal->blockSignals(false);
+    switch_or_add_meal(ui->comboBox_meal->currentIndex());
 }
 
 void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
@@ -296,5 +298,14 @@ void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
 {
     pull_tables(first_user_id, first_date);
     push_tables(second_user_id, second_date);
+}
+
+void MainWindow::reload_tables()
+{
+    auto current_user_id = ui->comboBox_user->currentIndex();
+    auto current_meal = ui->comboBox_meal->currentIndex();
+    const auto& current_date = ui->dateEdit->date();
+    switch_tables(current_user_id, current_date, current_user_id, current_date);
+    switch_or_add_meal(current_meal);
 }
 

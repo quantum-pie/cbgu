@@ -197,6 +197,11 @@
         <translation>ОК</translation>
     </message>
     <message>
+        <location filename="mealingredientsdialog.cpp" line="21"/>
+        <source>Edit Meal</source>
+        <translation>Состав блюда</translation>
+    </message>
+    <message>
         <location filename="mealingredientsdialog.cpp" line="43"/>
         <source>Add Ingredient</source>
         <translation>Добавить ингредиент</translation>

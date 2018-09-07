@@ -46,9 +46,9 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
     auto tree_context_menu = new QMenu(ui->treeView);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    auto add_category_action = new QAction(tr("Add Category"), tree_context_menu);
-    auto add_ingredient_action = new QAction(tr("Add Ingredient"), tree_context_menu);
-    auto remove_item_action = new QAction(tr("Remove Item"), tree_context_menu);
+    auto add_category_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Category"), tree_context_menu);
+    auto add_ingredient_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Ingredient"), tree_context_menu);
+    auto remove_item_action = new QAction(QIcon(":/icons/icons/garbage.png"), tr("Remove Item"), tree_context_menu);
 
     ui->treeView->addAction(add_category_action);
     ui->treeView->addAction(add_ingredient_action);
@@ -64,6 +64,7 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
     connect(ui->actionAdd_Root_Ingredient, SIGNAL(triggered()), this, SLOT(add_root_ingredient_triggered()));
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(close()));
+    connect(ui->ok_button, SIGNAL(released()), this, SIGNAL(closed()));
 
     connect(tree_model, SIGNAL(which_data_changed(const QVariant &,
                                                   const QModelIndex &)), this, SLOT(check_data_change(const QVariant &,
@@ -108,14 +109,17 @@ void IngredientsDialog::remove_item_triggered()
         {
             to_delete = !tree_model->hasChildren(main_index);
         }
-        else if(treeutils::delete_question())
+        else
         {
             auto name { main_index.data().toString() };
             auto meal_name { search_meal_functor(name.toStdString()) };
             if(meal_name.empty())
             {
-                to_delete = true;
-                product_dict_ref.remove(name);
+                if(treeutils::delete_question())
+                {
+                    to_delete = true;
+                    product_dict_ref.remove(name);
+                }
             }
             else
             {
@@ -168,9 +172,9 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
         }
         else if(!product_dict_ref.get(std_text))
         {
-            auto new_ingredient = new Ingredient(std_text);
-            tree_model->insert_row(new IngredientTreeItem(new_ingredient), 0, index);
+            auto new_ingredient = std::make_shared<Ingredient>(std_text);
             product_dict_ref.insert(new_ingredient);
+            tree_model->insert_row(new IngredientTreeItem(std::move(new_ingredient)), 0, index);
         }
         else
         {

@@ -1,12 +1,7 @@
 #include "ingredienttreeitem.h"
 
-IngredientTreeItem::IngredientTreeItem(Ingredient * data)
-        : item_data{ data } {}
-
-IngredientTreeItem::~IngredientTreeItem()
-{
-    delete item_data;
-}
+IngredientTreeItem::IngredientTreeItem(std::shared_ptr<Ingredient> data)
+        : item_data{ std::move(data) } {}
 
 QVariant IngredientTreeItem::data(int column) const
 {

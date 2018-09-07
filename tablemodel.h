@@ -10,6 +10,7 @@
 #include <QVariant>
 
 #include <vector>
+#include <memory>
 
 using namespace nlohmann;
 
@@ -36,7 +37,7 @@ public:
 
     // My API
     bool create_row(int position, const QModelIndex &parent = QModelIndex());
-    bool insert_row(const AbstractProduct * row, int position, const QModelIndex &parent = QModelIndex());
+    bool insert_row(const std::shared_ptr<const AbstractProduct> & row, int position, const QModelIndex &parent = QModelIndex());
     bool remove_row(int position, const QModelIndex &parent = QModelIndex());
 
     json get_json() const;
@@ -54,9 +55,9 @@ public:
     }
 
 private:
-    std::vector<std::pair<const AbstractProduct *, double>> product_list;
+    std::vector<std::pair<std::weak_ptr<const AbstractProduct>, double>> product_list;
     const ProductDictionary & product_dict_ref;
-    Ingredient dummy_product;
+    std::shared_ptr<Ingredient> dummy_product;
 
     static const double default_weight;
 };

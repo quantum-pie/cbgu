@@ -39,6 +39,9 @@ private slots:
     void check_data_change(const QVariant & before,
                            const QModelIndex & index);
 
+signals:
+    void closed();
+
 private:
     void add_category(const QModelIndex & index = QModelIndex{});
     void add_ingredient(const QModelIndex & index = QModelIndex{});

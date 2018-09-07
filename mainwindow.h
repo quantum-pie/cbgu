@@ -36,6 +36,7 @@ private slots:
     void proteins_norm_changed(int norm);
     void fats_norm_changed(int norm);
     void carbs_norm_changed(int norm);
+    void reload_tables();
 
 private:
     void switch_tables(int first_user_id, const QDate & first_date,

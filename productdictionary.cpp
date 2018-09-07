@@ -1,17 +1,17 @@
 #include "productdictionary.h"
 #include "abstractproduct.h"
 
-AbstractProduct * ProductDictionary::get(const std::string & name) const
+std::shared_ptr<AbstractProduct> ProductDictionary::get(const std::string & name) const
 {
     auto it = dict_backend.find(name);
     if(it != dict_backend.end())
     {
-        return it->second;
+        return it->second.lock();
     }
     else return nullptr;
 }
 
-bool ProductDictionary::insert(AbstractProduct * new_product)
+bool ProductDictionary::insert(const std::shared_ptr<AbstractProduct> & new_product)
 {
     auto res = dict_backend.emplace(new_product->get_name(), new_product);
     if(res.second)

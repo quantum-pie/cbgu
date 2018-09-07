@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/tomato.png</normaloff>:/icons/icons/tomato.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,2,2,6,5">
     <item row="0" column="1">
@@ -239,17 +243,27 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionIngredients">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/lemon.png</normaloff>:/icons/icons/lemon.png</iconset>
+   </property>
    <property name="text">
     <string>Ingredients</string>
    </property>
   </action>
   <action name="actionMeals">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/dish.png</normaloff>:/icons/icons/dish.png</iconset>
+   </property>
    <property name="text">
     <string>Meals</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -70,3 +70,6 @@ FORMS += \
     ingredientsdialog.ui \
     mealsdialog.ui \
     mealingredientsdialog.ui
+
+RESOURCES += \
+    resources.qrc

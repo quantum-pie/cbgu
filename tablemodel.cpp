@@ -6,7 +6,9 @@
 const double TableModel::default_weight { 100 };
 
 TableModel::TableModel(ProductDictionary & dict, QObject * parent)
-    : QAbstractTableModel{ parent }, product_dict_ref{ dict }
+    : QAbstractTableModel{ parent },
+      product_dict_ref{ dict },
+      dummy_product{ std::make_shared<Ingredient>() }
 {}
 
 int TableModel::columnCount(const QModelIndex &) const
@@ -23,7 +25,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
         return QVariant{};
 
     auto idx { static_cast<std::size_t>(index.row()) };
-    auto item = product_list[idx].first;
+    auto item = product_list[idx].first.lock();
     auto weight = product_list[idx].second;
 
     switch(index.column())
@@ -84,10 +86,10 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 bool TableModel::create_row(int position, const QModelIndex &parent)
 {
-    return insert_row(&dummy_product, position, parent);
+    return insert_row(dummy_product, position, parent);
 }
 
-bool TableModel::insert_row(const AbstractProduct * row, int position, const QModelIndex &parent)
+bool TableModel::insert_row(const std::shared_ptr<const AbstractProduct> & row, int position, const QModelIndex &parent)
 {
     beginInsertRows(parent, position, position);
 
@@ -143,7 +145,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             auto it = std::find_if(product_list.begin(), product_list.end(),
             [item](auto & ex_prod)
             {
-                return ex_prod.first == item;
+                return ex_prod.first.lock() == item;
             });
             if(it == product_list.end())
                 product_list[idx].first = item;
@@ -166,9 +168,12 @@ json TableModel::get_json() const
     json j;
     for(auto & product : product_list)
     {
-        auto product_name = product.first->get_name();
-        if(product_dict_ref.get(product_name))
+        auto item = product.first.lock();
+        if(item)
+        {
+            auto product_name = item->get_name();
             j[product_name] = product.second;
+        }
     }
     return j;
 }
@@ -179,10 +184,11 @@ ProductParams TableModel::summary() const
     for(auto & product : product_list)
     {
         double portion { product.second / 100.0 };
-        params.calories += product.first->get_calories() * portion;
-        params.proteins += product.first->get_proteins() * portion;
-        params.fats += product.first->get_fats() * portion;
-        params.carbs += product.first->get_carbs() * portion;
+        auto item = product.first.lock();
+        params.calories += item->get_calories() * portion;
+        params.proteins += item->get_proteins() * portion;
+        params.fats += item->get_fats() * portion;
+        params.carbs += item->get_carbs() * portion;
     }
     return params;
 }

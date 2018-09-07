@@ -6,12 +6,13 @@
 #include "nlohmann/json.hpp"
 
 #include <vector>
+#include <memory>
 
 #include <QVariant>
 
 using namespace nlohmann;
 
-QVariant productd_data(const AbstractProduct * product, int column);
+QVariant productd_data(std::shared_ptr<const AbstractProduct> product, int column);
 
 class AbstractTreeItem
 {

@@ -1,6 +1,6 @@
 #include "abstracttreeitem.h"
 
-QVariant productd_data(const AbstractProduct * product, int column)
+QVariant productd_data(std::shared_ptr<const AbstractProduct> product, int column)
 {
     switch(column)
     {
@@ -93,6 +93,7 @@ bool AbstractTreeItem::remove_child(int position)
 {
     if(!child_items.empty() && static_cast<std::size_t>(position) < child_items.size())
     {
+        delete child_items[position];
         child_items.erase(child_items.begin() + position);
         return true;
     }

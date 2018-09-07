@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/salad.png</normaloff>:/icons/icons/salad.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="1,2,4,1,1">
    <item row="2" column="4">
     <widget class="QPushButton" name="cancel_button">
@@ -56,6 +60,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

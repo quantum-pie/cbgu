@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/lemon.png</normaloff>:/icons/icons/lemon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="1">
@@ -60,16 +64,26 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAdd_Root_Category">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
+   </property>
    <property name="text">
     <string>Add Root Category</string>
    </property>
   </action>
   <action name="actionAdd_Root_Ingredient">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/add.png</normaloff>:/icons/icons/add.png</iconset>
+   </property>
    <property name="text">
     <string>Add Root Ingredient</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -31,15 +31,16 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const j
         }
         else if(type == "ingredient")
         {
-            auto new_ingredient = new Ingredient(name,
+            auto new_ingredient = std::make_shared<Ingredient>(name,
                                                  value["calories"],
                                                  value["proteins"],
                                                  value["fats"],
                                                  value["carbohydrates"]);
 
-            auto new_ingredient_item = new IngredientTreeItem(new_ingredient);
-            tree_model->insert_row(new_ingredient_item, child_counter++, index);
             dict.insert(new_ingredient);
+
+            auto new_ingredient_item = new IngredientTreeItem(std::move(new_ingredient));
+            tree_model->insert_row(new_ingredient_item, child_counter++, index);
         }
         else if(type == "meal")
         {
@@ -51,10 +52,10 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const j
                 ingredients.emplace_back(dict.get(ing_name), ing_weight);
             }
 
-            auto new_meal = new Meal(name, ingredients);
-            auto new_meal_item = new MealTreeItem(new_meal);
-            tree_model->insert_row(new_meal_item, child_counter++, index);
+            auto new_meal = std::make_shared<Meal>(name, ingredients);
             dict.insert(new_meal);
+            auto new_meal_item = new MealTreeItem(std::move(new_meal));
+            tree_model->insert_row(new_meal_item, child_counter++, index);
         }
     }
 

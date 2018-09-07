@@ -4,11 +4,13 @@
 #include "abstracttreeitem.h"
 #include "ingredient.h"
 
+#include <memory>
+
 class IngredientTreeItem : public AbstractTreeItem
 {
 public:
-    explicit IngredientTreeItem(Ingredient * data);
-    ~IngredientTreeItem() override;
+    explicit IngredientTreeItem(std::shared_ptr<Ingredient> data);
+    ~IngredientTreeItem() override = default;
 
     bool is_editable(int) const override;
     QVariant data(int column) const override;
@@ -18,7 +20,7 @@ public:
 private:
     json to_json() const override;
 
-    Ingredient * item_data;
+    std::shared_ptr<Ingredient> item_data;
 };
 
 #endif // INGREDIENTTREEITEM_H

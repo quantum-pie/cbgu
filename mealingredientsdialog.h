@@ -17,7 +17,7 @@ class MealIngredientsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MealIngredientsDialog(ProductDictionary & product_dict, const Meal * meal = nullptr, QWidget * parent = nullptr);
+    explicit MealIngredientsDialog(ProductDictionary & product_dict, std::shared_ptr<const Meal> meal = nullptr, QWidget * parent = nullptr);
     ~MealIngredientsDialog();
 
     Meal::ingredients_container_type get_ingredients() const;

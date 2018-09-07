@@ -1,12 +1,7 @@
 #include "mealtreeitem.h"
 
-MealTreeItem::MealTreeItem(Meal * data)
-        : item_data{ data } {}
-
-MealTreeItem::~MealTreeItem()
-{
-    delete item_data;
-}
+MealTreeItem::MealTreeItem(std::shared_ptr<Meal> data)
+        : item_data{ std::move(data) } {}
 
 QVariant MealTreeItem::data(int column) const
 {
