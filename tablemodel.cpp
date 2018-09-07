@@ -63,19 +63,19 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
         switch(section)
         {
         case 0:
-            return "Product";
+            return tr("Product");
         case 1:
-            return "Calories";
+            return tr("Calories");
         case 2:
-            return "Proteins";
+            return tr("Proteins");
         case 3:
-            return "Fats";
+            return tr("Fats");
         case 4:
-            return "Carbohydrates";
+            return tr("Carbohydrates");
         case 5:
-            return "Weight";
+            return tr("Weight");
         default:
-            return "[No Data]";
+            return tr("[No Data]");
         }
     }
 

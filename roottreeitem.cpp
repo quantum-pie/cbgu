@@ -1,5 +1,7 @@
 #include "roottreeitem.h"
 
+#include <QObject>
+
 bool RootTreeItem::set_data(const QVariant &, int)
 {
     return false;
@@ -10,17 +12,17 @@ QVariant RootTreeItem::data(int column) const
     switch(column)
     {
     case 0:
-        return "Product";
+        return QObject::tr("Product");
     case 1:
-        return "Calories";
+        return QObject::tr("Calories");
     case 2:
-        return "Proteins";
+        return QObject::tr("Proteins");
     case 3:
-        return "Fats";
+        return QObject::tr("Fats");
     case 4:
-        return "Carbohydrates";
+        return QObject::tr("Carbohydrates");
     default:
-        return "[No Data]";
+        return QObject::tr("[No Data]");
     }
 }
 

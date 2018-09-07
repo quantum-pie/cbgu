@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     meals_dialog = new MealsDialog{ dict };
     ingredients_dialog->set_searcher([this](auto& name) { return meals_dialog->is_used(name); } );
 
-    default_meals << "Breakfast" << "Lunch" << "Dinner" << "Snack";
+    default_meals << tr("Breakfast") << tr("Lunch") << tr("Dinner") << tr("Snack");
 
     QDirIterator it(QString::fromStdString(user_data_path), QDir::AllDirs | QDir::NoDotAndDotDot);
     while(it.hasNext())
@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     auto table_context_menu = new QMenu(ui->tableView);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    auto add_ingredient_action = new QAction("Add Product", table_context_menu);
-    auto remove_ingredient_action = new QAction("Remove Product", table_context_menu);
+    auto add_ingredient_action = new QAction(tr("Add Product"), table_context_menu);
+    auto remove_ingredient_action = new QAction(tr("Remove Product"), table_context_menu);
 
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);
