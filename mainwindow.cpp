@@ -29,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto completer_delegate = new IngredientCompleterDelegate(dict, ui->tableView);
     ui->tableView->setItemDelegate(completer_delegate);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ingredients_dialog = new IngredientsDialog{ dict };
     meals_dialog = new MealsDialog{ dict };
