@@ -172,3 +172,17 @@ json TableModel::get_json() const
     }
     return j;
 }
+
+ProductParams TableModel::summary() const
+{
+    ProductParams params {0, 0, 0, 0};
+    for(auto & product : product_list)
+    {
+        double portion { product.second / 100.0 };
+        params.calories += product.first->get_calories() * portion;
+        params.proteins += product.first->get_proteins() * portion;
+        params.fats += product.first->get_fats() * portion;
+        params.carbs += product.first->get_carbs() * portion;
+    }
+    return params;
+}
