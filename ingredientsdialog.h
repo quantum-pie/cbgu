@@ -36,8 +36,6 @@ private slots:
     void remove_item_triggered();
     void add_root_category_triggered();
     void add_root_ingredient_triggered();
-    void ok_pressed();
-    void cancel_pressed();
     void check_data_change(const QVariant & before,
                            const QModelIndex & index);
 

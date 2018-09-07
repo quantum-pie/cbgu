@@ -40,8 +40,8 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
     auto table_context_menu = new QMenu(ui->tableView);
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    auto add_ingredient_action = new QAction("Add Ingredient", table_context_menu);
-    auto remove_ingredient_action = new QAction("Remove Ingredient", table_context_menu);
+    auto add_ingredient_action = new QAction(tr("Add Ingredient"), table_context_menu);
+    auto remove_ingredient_action = new QAction(tr("Remove Ingredient"), table_context_menu);
 
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);

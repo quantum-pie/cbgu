@@ -26,7 +26,7 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle("Meals Library");
+    setWindowTitle(tr("Meals Library"));
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     json tree_backend;
@@ -46,10 +46,10 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     auto tree_context_menu = new QMenu(ui->treeView);
     ui->treeView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    auto add_category_action = new QAction("Add Category", tree_context_menu);
-    auto add_meal_action = new QAction("Add Meal", tree_context_menu);
-    auto edit_meal_action = new QAction("Edit Meal", tree_context_menu);
-    auto remove_item_action = new QAction("Remove Item", tree_context_menu);
+    auto add_category_action = new QAction(tr("Add Category"), tree_context_menu);
+    auto add_meal_action = new QAction(tr("Add Meal"), tree_context_menu);
+    auto edit_meal_action = new QAction(tr("Edit Meal"), tree_context_menu);
+    auto remove_item_action = new QAction(tr("Remove Item"), tree_context_menu);
 
     ui->treeView->addAction(add_category_action);
     ui->treeView->addAction(add_meal_action);
@@ -66,8 +66,7 @@ MealsDialog::MealsDialog(ProductDictionary & dict, QWidget *parent) :
     connect(ui->actionAdd_Root_Category, SIGNAL(triggered()), this, SLOT(add_root_category_triggered()));
     connect(ui->actionAdd_Root_Meal, SIGNAL(triggered()), this, SLOT(add_root_meal_triggered()));
 
-    connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pressed()));
-    connect(ui->cancel_button, SIGNAL(released()), this, SLOT(cancel_pressed()));
+    connect(ui->ok_button, SIGNAL(released()), this, SLOT(close()));
 
     connect(tree_model, SIGNAL(which_data_changed(const QVariant &,
                                                   const QModelIndex &)), this, SLOT(check_data_change(const QVariant &,
@@ -202,16 +201,6 @@ void MealsDialog::add_meal(const QModelIndex & index)
         tree_model->insert_row(new MealTreeItem(new_meal), 0, index);
         product_dict_ref.insert(new_meal);
     }
-}
-
-void MealsDialog::ok_pressed()
-{
-    close();
-}
-
-void MealsDialog::cancel_pressed()
-{
-    close();
 }
 
 void MealsDialog::check_data_change(const QVariant & before,
