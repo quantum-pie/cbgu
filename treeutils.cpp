@@ -126,6 +126,19 @@ void is_added_error()
     error_message.show();
 }
 
+void empty_composition_error()
+{
+    QMessageBox error_message;
+    error_message.warning(nullptr, "Error", "Meal has no ingredients");
+    error_message.setFixedSize(500, 200);
+    error_message.show();
+}
+
+bool delete_question()
+{
+    return QMessageBox::question(nullptr, "Remove Item", "Are you sure you want to remove this item?") == QMessageBox::Yes;
+}
+
 std::string date_to_string(const QDate & date)
 {
     return std::to_string(date.day()) + '_' +

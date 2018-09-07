@@ -29,6 +29,10 @@ void is_used_error(const QString & name);
 
 void is_added_error();
 
+void empty_composition_error();
+
+bool delete_question();
+
 std::string date_to_string(const QDate & date);
 
 }
