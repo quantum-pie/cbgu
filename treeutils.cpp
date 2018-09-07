@@ -10,6 +10,7 @@
 
 #include <QMessageBox>
 #include <QDate>
+#include <QIcon>
 
 namespace treeutils
 {
@@ -98,6 +99,7 @@ void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)
 void empty_name_error()
 {
     QMessageBox error_message;
+    error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
     error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product name cannot be empty"));
     error_message.setFixedSize(500, 200);
     error_message.show();
@@ -106,15 +108,17 @@ void empty_name_error()
 void same_name_error()
 {
     QMessageBox error_message;
+    error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
     error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product with such name already exists"));
     error_message.setFixedSize(500, 200);
     error_message.show();
 }
 
-void is_used_error(const QString & name)
+void is_used_error(const QString & name, QWidget * parent)
 {
     QMessageBox error_message;
-    error_message.critical(nullptr, QObject::tr("Error"), "'" + name + QObject::tr("' meal use this ingredient - aborting removal"));
+    error_message.setWindowIcon(QIcon(QPixmap(":/icons/icons/error.png")));
+    error_message.critical(parent, QObject::tr("Error"), "'" + name + QObject::tr("' meal use this ingredient - aborting removal"));
     error_message.setFixedSize(500, 200);
     error_message.show();
 }
@@ -122,6 +126,7 @@ void is_used_error(const QString & name)
 void is_added_error()
 {
     QMessageBox error_message;
+    error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
     error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product with such name already added to the list"));
     error_message.setFixedSize(500, 200);
     error_message.show();
@@ -130,6 +135,7 @@ void is_added_error()
 void empty_composition_error()
 {
     QMessageBox error_message;
+    error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
     error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Meal has no ingredients"));
     error_message.setFixedSize(500, 200);
     error_message.show();
@@ -137,7 +143,10 @@ void empty_composition_error()
 
 bool delete_question()
 {
-    return QMessageBox::question(nullptr, QObject::tr("Remove Item"), QObject::tr("Are you sure you want to remove this item?")) == QMessageBox::Yes;
+    QMessageBox question_message;
+    question_message.setWindowIcon(QIcon(":/icons/icons/garbage.png"));
+    question_message.setFixedSize(500, 200);
+    return question_message.question(nullptr, QObject::tr("Remove Item"), QObject::tr("Are you sure you want to remove this item?")) == QMessageBox::Yes;
 }
 
 std::string date_to_string(const QDate & date)
