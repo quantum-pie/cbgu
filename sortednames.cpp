@@ -23,13 +23,9 @@ bool SortedNames::insert_row(const QString & row)
     beginInsertRows(QModelIndex{}, idx, idx);
 
     if(names.empty())
-    {
         names.emplace_back(row);
-    }
     else
-    {
         names.insert(it, row);
-    }
 
     endInsertRows();
 
