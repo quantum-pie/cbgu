@@ -29,6 +29,7 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
     setWindowTitle("Ingredients Library");
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
+    json tree_backend;
     std::ifstream tree_desc{ tree_path };
     if(tree_desc.good())
     {
@@ -79,7 +80,7 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
 IngredientsDialog::~IngredientsDialog()
 {
     std::ofstream o(tree_path);
-    o << std::setw(4) << tree_backend << std::endl;
+    o << std::setw(4) << tree_model->get_json() << std::endl;
     delete ui;
 }
 
@@ -181,7 +182,6 @@ void IngredientsDialog::add_ingredient(const QModelIndex & index)
 void IngredientsDialog::ok_pressed()
 {
     tree_model->apply(true);
-    tree_backend = tree_model->get_json();
     close();
 }
 

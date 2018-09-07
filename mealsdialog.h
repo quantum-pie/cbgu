@@ -46,7 +46,6 @@ private:
     Ui::MealsDialog *ui;
 
     TreeModel * tree_model;
-    nlohmann::json tree_backend;
 
     ProductDictionary & product_dict_ref;
 

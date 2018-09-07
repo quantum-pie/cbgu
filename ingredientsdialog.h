@@ -48,7 +48,6 @@ private:
     Ui::IngredientsDialog * ui;
 
     TreeModel * tree_model;
-    nlohmann::json tree_backend;
 
     std::function<std::string(const std::string&)> search_meal_functor;
 
