@@ -6,33 +6,43 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>669</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" colspan="3">
-    <widget class="QTableView" name="tableView"/>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="ok_button">
-     <property name="text">
-      <string>OK</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,2,4,1,1">
+   <item row="2" column="4">
     <widget class="QPushButton" name="cancel_button">
      <property name="text">
       <string>Cancel</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <spacer name="horizontalSpacer">
+   <item row="1" column="0" colspan="5">
+    <widget class="QTableView" name="tableView"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Name:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="ok_button">
+     <property name="text">
+      <string>OK</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -43,16 +53,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit"/>
    </item>
   </layout>
  </widget>

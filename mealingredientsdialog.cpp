@@ -33,6 +33,7 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
         for(auto& ingredient : meal->get_ingredients())
         {
             table_model->insert_row(ingredient.first, 0);
+            table_model->setData(table_model->index(0, table_model->weight_idx()), ingredient.second);
         }
     }
 
@@ -44,6 +45,7 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, c
 
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_ingredient_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_ingredient_triggered()));
@@ -87,6 +89,10 @@ void MealIngredientsDialog::ok_pressed()
     if(new_name.empty())
     {
         treeutils::empty_name_error();
+    }
+    else if(table_model->rowCount() == 0)
+    {
+        treeutils::empty_composition_error();
     }
     else if(name == new_name || !product_dict_ref.get(new_name))
     {
