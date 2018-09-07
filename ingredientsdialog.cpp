@@ -123,7 +123,7 @@ void IngredientsDialog::remove_item_triggered()
             }
             else
             {
-                treeutils::is_used_error(QString::fromStdString(meal_name), this);
+                treeutils::is_used_error(QString::fromStdString(meal_name));
             }
         }
 

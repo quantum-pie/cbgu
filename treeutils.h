@@ -25,7 +25,7 @@ void empty_name_error();
 
 void same_name_error();
 
-void is_used_error(const QString & name, QWidget * parent);
+void is_used_error(const QString & name);
 
 void is_added_error();
 

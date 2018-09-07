@@ -100,53 +100,67 @@ void empty_name_error()
 {
     QMessageBox error_message;
     error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
-    error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product name cannot be empty"));
+    error_message.setIcon(QMessageBox::Warning);
+    error_message.setWindowTitle(QObject::tr("Error"));
+    error_message.setText(QObject::tr("Product name cannot be empty"));
     error_message.setFixedSize(500, 200);
-    error_message.show();
+    error_message.exec();
 }
 
 void same_name_error()
 {
     QMessageBox error_message;
     error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
-    error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product with such name already exists"));
+    error_message.setIcon(QMessageBox::Warning);
+    error_message.setWindowTitle(QObject::tr("Error"));
+    error_message.setText(QObject::tr("Product with such name already exists"));
     error_message.setFixedSize(500, 200);
-    error_message.show();
+    error_message.exec();
 }
 
-void is_used_error(const QString & name, QWidget * parent)
+void is_used_error(const QString & name)
 {
     QMessageBox error_message;
-    error_message.setWindowIcon(QIcon(QPixmap(":/icons/icons/error.png")));
-    error_message.critical(parent, QObject::tr("Error"), "'" + name + QObject::tr("' meal use this ingredient - aborting removal"));
+    error_message.setWindowIcon(QIcon(":/icons/icons/error.png"));
+    error_message.setIcon(QMessageBox::Critical);
+    error_message.setWindowTitle(QObject::tr("Error"));
+    error_message.setText("'" + name + QObject::tr("' meal use this ingredient - aborting removal"));
     error_message.setFixedSize(500, 200);
-    error_message.show();
+    error_message.exec();
 }
 
 void is_added_error()
 {
     QMessageBox error_message;
     error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
-    error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Product with such name already added to the list"));
+    error_message.setIcon(QMessageBox::Warning);
+    error_message.setWindowTitle(QObject::tr("Error"));
+    error_message.setText(QObject::tr("Product with such name already added to the list"));
     error_message.setFixedSize(500, 200);
-    error_message.show();
+    error_message.exec();
 }
 
 void empty_composition_error()
 {
     QMessageBox error_message;
     error_message.setWindowIcon(QIcon(":/icons/icons/warning.png"));
-    error_message.warning(nullptr, QObject::tr("Error"), QObject::tr("Meal has no ingredients"));
+    error_message.setIcon(QMessageBox::Warning);
+    error_message.setWindowTitle(QObject::tr("Error"));
+    error_message.setText(QObject::tr("Meal has no ingredients"));
     error_message.setFixedSize(500, 200);
-    error_message.show();
+    error_message.exec();
 }
 
 bool delete_question()
 {
     QMessageBox question_message;
     question_message.setWindowIcon(QIcon(":/icons/icons/garbage.png"));
+    question_message.setIcon(QMessageBox::Question);
+    question_message.setWindowTitle(QObject::tr("Remove Item"));
+    question_message.setText(QObject::tr("Are you sure you want to remove this item?"));
+    question_message.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     question_message.setFixedSize(500, 200);
-    return question_message.question(nullptr, QObject::tr("Remove Item"), QObject::tr("Are you sure you want to remove this item?")) == QMessageBox::Yes;
+    return question_message.exec() == QMessageBox::Yes;
 }
 
 std::string date_to_string(const QDate & date)
