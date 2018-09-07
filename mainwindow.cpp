@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow{ parent },
     ui{ new Ui::MainWindow },
     prev_date{ QDate::currentDate() },
-    prev_user{ 0 }
+    prev_user{ -1 }, user_count{ 0 }
 {
     ui->setupUi(this);
 
@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto completer_delegate = new IngredientCompleterDelegate(dict, ui->tableView);
     ui->tableView->setItemDelegate(completer_delegate);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ingredients_dialog = new IngredientsDialog{ dict };
     meals_dialog = new MealsDialog{ dict };
@@ -40,11 +41,13 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboBox_user->addItem(it.next().split("/").last());
     }
 
-    if(ui->comboBox_user->count())
+    user_count = ui->comboBox_user->count();
+    if(user_count)
     {
         ui->dateEdit->setEnabled(true);
         ui->comboBox_meal->setEnabled(true);
-        push_tables(0, ui->dateEdit->date());
+        prev_user = 0;
+        push_tables(prev_user, ui->dateEdit->date());
     }
 
     connect(ui->actionIngredients, SIGNAL(triggered(bool)), ingredients_dialog, SLOT(show()));
@@ -80,11 +83,21 @@ void MainWindow::switch_or_add_user(int user_id)
 {
     ui->dateEdit->setEnabled(true);
     ui->comboBox_meal->setEnabled(true);
-    if(user_id == static_cast<int>(ui->comboBox_user->count()))
+    if(user_id == user_count)
     {
+        user_count++;
         QDir user_data_dir { QString::fromStdString(user_data_path) };
         auto new_user_name = ui->comboBox_user->currentText();
         user_data_dir.mkdir(new_user_name);
+
+        json norm_j;
+        norm_j["calories"] = 0;
+        norm_j["proteins"] = 0;
+        norm_j["fats"] = 0;
+        norm_j["carbohydrates"] = 0;
+
+        std::ofstream daily_norm(user_data_path + '/' + new_user_name.toStdString() + '/' + "daily_norm.dat");
+        daily_norm << std::setw(4) << norm_j;
     }
 
     auto current_date = ui->dateEdit->date();
@@ -99,14 +112,15 @@ void MainWindow::switch_or_add_meal(int meal_id)
         daily_user_tables.emplace_back(new TableModel(dict));
     }
 
-    current_model = daily_user_tables[meal_id];
+    current_model = daily_user_tables[static_cast<std::size_t>(meal_id)];
     ui->tableView->setModel(current_model);
 }
 
 void MainWindow::switch_date(const QDate & new_date)
 {
     auto current_user_id = ui->comboBox_user->currentIndex();
-    switch_tables(current_user_id, prev_date, current_user_id, new_date);
+    switch_tables(current_user_id, prev_date,
+                  current_user_id, new_date);
     prev_date = new_date;
 }
 
@@ -124,29 +138,32 @@ void MainWindow::remove_product_triggered()
     }
 }
 
-void MainWindow::pull_tables(std::size_t user_id, const QDate & date)
+void MainWindow::pull_tables(int user_id, const QDate & date)
 {
-    ui->comboBox_meal->blockSignals(true);
-
-    auto user_name = ui->comboBox_user->itemText(user_id).toStdString();
-    std::string path { user_data_path + user_name + '/' + treeutils::date_to_string(date) + ".dat" };
-    std::ofstream o{ path };
-    auto j = json::array();
-    for(std::size_t table_id = 0; table_id < daily_user_tables.size(); ++table_id)
+    if(user_id != -1)
     {
-        json j_table;
-        j_table["name"] = ui->comboBox_meal->itemText(table_id).toStdString();
-        j_table["value"] = daily_user_tables[table_id]->get_json();
-        j.emplace_back(j_table);
-        delete daily_user_tables[table_id];
-    }
-    o << std::setw(4) << j;
+        ui->comboBox_meal->blockSignals(true);
 
-    ui->comboBox_meal->clear();
-    ui->comboBox_meal->blockSignals(false);
+        auto user_name = ui->comboBox_user->itemText(user_id).toStdString();
+        std::string path { user_data_path + user_name + '/' + treeutils::date_to_string(date) + ".dat" };
+        std::ofstream o{ path };
+        auto j = json::array();
+        for(std::size_t table_id = 0; table_id < daily_user_tables.size(); ++table_id)
+        {
+            json j_table;
+            j_table["name"] = ui->comboBox_meal->itemText(static_cast<int>(table_id)).toStdString();
+            j_table["value"] = daily_user_tables[table_id]->get_json();
+            j.emplace_back(j_table);
+            delete daily_user_tables[table_id];
+        }
+        o << std::setw(4) << j;
+
+        ui->comboBox_meal->clear();
+        ui->comboBox_meal->blockSignals(false);
+    }
 }
 
-void MainWindow::push_tables(std::size_t user_id, const QDate & date)
+void MainWindow::push_tables(int user_id, const QDate & date)
 {
     ui->comboBox_meal->blockSignals(true);
 
@@ -162,7 +179,7 @@ void MainWindow::push_tables(std::size_t user_id, const QDate & date)
     }
     else
     {
-        new_table_size = default_meals.size();
+        new_table_size = static_cast<std::size_t>(default_meals.size());
         ui->comboBox_meal->addItems(default_meals);
     }
 
@@ -190,8 +207,8 @@ void MainWindow::push_tables(std::size_t user_id, const QDate & date)
     switch_or_add_meal(ui->comboBox_meal->currentIndex());
 }
 
-void MainWindow::switch_tables(std::size_t first_user_id, const QDate & first_date,
-                   std::size_t second_user_id, const QDate & second_date)
+void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
+                               int second_user_id, const QDate & second_date)
 {
     pull_tables(first_user_id, first_date);
     push_tables(second_user_id, second_date);

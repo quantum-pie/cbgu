@@ -32,10 +32,10 @@ private slots:
     void remove_product_triggered();
 
 private:
-    void switch_tables(std::size_t first_user_id, const QDate & first_date,
-                       std::size_t second_user_id, const QDate & second_date);
-    void pull_tables(std::size_t user_id, const QDate & date);
-    void push_tables(std::size_t user_id, const QDate & date);
+    void switch_tables(int first_user_id, const QDate & first_date,
+                       int second_user_id, const QDate & second_date);
+    void pull_tables(int user_id, const QDate & date);
+    void push_tables(int user_id, const QDate & date);
 
     Ui::MainWindow * ui;
     IngredientsDialog * ingredients_dialog;
@@ -46,7 +46,8 @@ private:
     std::vector<TableModel *> daily_user_tables;
     TableModel * current_model;
     QDate prev_date;
-    std::size_t prev_user;
+    int prev_user;
+    int user_count;
 
     static const std::string user_data_path;
 };
