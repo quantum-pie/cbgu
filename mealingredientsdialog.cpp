@@ -93,9 +93,9 @@ void MealIngredientsDialog::ok_pressed()
         name = new_name;
         for(int i = 0; i < table_model->rowCount(); ++i)
         {
-            auto index = table_model->index(i, 0);
+            auto index = table_model->index(i, table_model->name_idx());
             auto ing_name = index.data().toString();
-            index = table_model->index(i, 5);
+            index = table_model->index(i, table_model->weight_idx());
             auto weight = index.data().toDouble();
             auto item = product_dict_ref.get(ing_name.toStdString());
             if(item)
