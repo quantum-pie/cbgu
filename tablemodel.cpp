@@ -51,7 +51,7 @@ Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
         return Qt::NoItemFlags;
 
     auto flg { QAbstractItemModel::flags(index) };
-    if(index.column() == 0 || index.column() == 5)
+    if(index.column() == name_idx() || index.column() == weight_idx())
         return Qt::ItemIsEditable | flg;
     else return flg;
 }
@@ -135,7 +135,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     auto idx { static_cast<std::size_t>(index.row()) };
     switch(index.column())
     {
-    case 0:
+    case name_idx():
         {
         auto item = product_dict_ref.get(value.toString().toStdString());
         if(item)
@@ -150,7 +150,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         }
         break;
         }
-    case 5:
+    case weight_idx():
         product_list[idx].second = value.toDouble();
         break;
     default:

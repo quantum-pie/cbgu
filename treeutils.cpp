@@ -70,7 +70,7 @@ TableModel * build_table(TableModel * table_model, ProductDictionary & dict, con
         if(item)
         {
             table_model->insert_row(item, rows);
-            table_model->setData(table_model->index(rows, 5), it->get<double>());
+            table_model->setData(table_model->index(rows, table_model->weight_idx()), it->get<double>());
             rows++;
         }
     }

@@ -13,7 +13,7 @@
 
 using namespace nlohmann;
 
-class AbstractProduct;
+struct AbstractProduct;
 class ProductDictionary;
 
 class TableModel : public QAbstractTableModel
@@ -40,6 +40,18 @@ public:
     bool remove_row(int position, const QModelIndex &parent = QModelIndex());
 
     json get_json() const;
+
+    ProductParams summary() const;
+
+    static constexpr std::size_t name_idx()
+    {
+        return 0;
+    }
+
+    static constexpr std::size_t weight_idx()
+    {
+        return 5;
+    }
 
 private:
     std::vector<std::pair<const AbstractProduct *, double>> product_list;
