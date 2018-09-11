@@ -7,8 +7,7 @@ const double TableModel::default_weight { 100 };
 
 TableModel::TableModel(ProductDictionary & dict, QObject * parent)
     : QAbstractTableModel{ parent },
-      product_dict_ref{ dict },
-      dummy_product{ std::make_shared<Ingredient>() }
+      product_dict_ref{ dict }
 {}
 
 int TableModel::columnCount(const QModelIndex &) const
@@ -25,21 +24,22 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
         return QVariant{};
 
     auto idx { static_cast<std::size_t>(index.row()) };
-    auto item = product_list[idx].first.lock();
-    auto weight = product_list[idx].second;
+    auto& name = std::get<0>(product_list[idx]);
+    auto& params = std::get<1>(product_list[idx]);
+    auto weight = std::get<2>(product_list[idx]);
 
     switch(index.column())
     {
     case 0:
-        return QString::fromStdString(item->get_name());
+        return QString::fromStdString(name);
     case 1:
-        return item->get_calories();
+        return params.calories;
     case 2:
-        return item->get_proteins();
+        return params.proteins;
     case 3:
-        return item->get_fats();
+        return params.fats;
     case 4:
-        return item->get_carbs();
+        return params.carbs;
     case 5:
         return weight;
     default:
@@ -86,30 +86,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 bool TableModel::create_row(int position, const QModelIndex &parent)
 {
-    return insert_row(dummy_product, position, parent);
-}
-
-bool TableModel::insert_row(const std::shared_ptr<const AbstractProduct> & row, int position, const QModelIndex &parent)
-{
-    beginInsertRows(parent, position, position);
-
-    bool res { true };
-    if(product_list.empty() && position == 0)
-    {
-        product_list.emplace_back(std::make_pair(row, default_weight));
-    }
-    else if(static_cast<std::size_t>(position) <= product_list.size())
-    {
-        product_list.insert(product_list.begin() + position, std::make_pair(row, default_weight));
-    }
-    else
-    {
-        res = false;
-    }
-
-    endInsertRows();
-
-    return res;
+    return emplace_row("", ProductParams{0, 0, 0, 0}, position, parent);
 }
 
 bool TableModel::remove_row(int position, const QModelIndex &parent)
@@ -145,15 +122,21 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             auto it = std::find_if(product_list.begin(), product_list.end(),
             [item](auto & ex_prod)
             {
-                return ex_prod.first.lock() == item;
+                return std::get<0>(ex_prod) == item->get_name();
             });
             if(it == product_list.end())
-                product_list[idx].first = item;
+            {
+                std::get<0>(product_list[idx]) = item->get_name();
+                std::get<1>(product_list[idx]) = {  item->get_calories(),
+                                                    item->get_proteins(),
+                                                    item->get_fats(),
+                                                    item->get_carbs() };
+            }
         }
         break;
         }
     case weight_idx():
-        product_list[idx].second = value.toDouble();
+        std::get<2>(product_list[idx]) = value.toDouble();
         break;
     default:
         return false;
@@ -168,12 +151,18 @@ json TableModel::get_json() const
     json j;
     for(auto & product : product_list)
     {
-        auto item = product.first.lock();
-        if(item)
-        {
-            auto product_name = item->get_name();
-            j[product_name] = product.second;
-        }
+        auto& name = std::get<0>(product);
+        auto& params = std::get<1>(product);
+        auto weight = std::get<2>(product);
+
+        json j_el;
+        j_el["calories"] = params.calories;
+        j_el["proteins"] = params.proteins;
+        j_el["fats"] = params.fats;
+        j_el["carbohydrates"] = params.carbs;
+        j_el["weight"] = weight;
+
+        j[name] = j_el;
     }
     return j;
 }
@@ -183,12 +172,17 @@ ProductParams TableModel::summary() const
     ProductParams params {0, 0, 0, 0};
     for(auto & product : product_list)
     {
-        double portion { product.second / 100.0 };
-        auto item = product.first.lock();
-        params.calories += item->get_calories() * portion;
-        params.proteins += item->get_proteins() * portion;
-        params.fats += item->get_fats() * portion;
-        params.carbs += item->get_carbs() * portion;
+        double portion { std::get<2>(product) / 100.0 };
+        auto& par = std::get<1>(product);
+        params.calories += par.calories * portion;
+        params.proteins += par.proteins * portion;
+        params.fats += par.fats * portion;
+        params.carbs += par.carbs * portion;
     }
     return params;
+}
+
+void TableModel::clear()
+{
+    product_list.clear();
 }

@@ -35,9 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     meals_dialog = new MealsDialog{ dict };
     ingredients_dialog->set_searcher([this](auto& name) { return meals_dialog->is_used(name); } );
 
-    connect(ingredients_dialog, SIGNAL(closed()), this, SLOT(reload_tables()));
-    connect(meals_dialog, SIGNAL(closed()), this, SLOT(reload_tables()));
-
     default_meals << tr("Breakfast") << tr("Lunch") << tr("Dinner") << tr("Snack");
 
     QDirIterator it(QString::fromStdString(user_data_path), QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -262,13 +259,13 @@ void MainWindow::push_tables(int user_id, const QDate & date)
 
     if(in.good())
     {
-        auto rebuild_functor = [this](TableModel * table, const json & js)
+        auto rebuild_functor = [](TableModel * table, const json & js)
         {
-            return treeutils::build_table(table, dict, js["value"]);
+            return treeutils::build_table(table, js["value"]);
         };
 
         std::transform(daily_user_tables.begin(), daily_user_tables.end(),
-                       j.begin(), daily_user_tables.begin(), std::move(rebuild_functor));
+                       j.begin(), daily_user_tables.begin(), rebuild_functor);
 
         for(auto& j_el : j)
         {
@@ -299,13 +296,3 @@ void MainWindow::switch_tables(int first_user_id, const QDate & first_date,
     pull_tables(first_user_id, first_date);
     push_tables(second_user_id, second_date);
 }
-
-void MainWindow::reload_tables()
-{
-    auto current_user_id = ui->comboBox_user->currentIndex();
-    auto current_meal = ui->comboBox_meal->currentIndex();
-    const auto& current_date = ui->dateEdit->date();
-    switch_tables(current_user_id, current_date, current_user_id, current_date);
-    switch_or_add_meal(current_meal);
-}
-

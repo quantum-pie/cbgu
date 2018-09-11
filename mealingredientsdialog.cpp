@@ -32,7 +32,14 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, s
         name = meal->get_name();
         for(auto& ingredient : meal->get_ingredients())
         {
-            table_model->insert_row(ingredient.first, 0);
+            auto item = ingredient.first;
+            table_model->emplace_row(item->get_name(),
+                                     ProductParams {
+                                     item->get_calories(),
+                                     item->get_proteins(),
+                                     item->get_fats(),
+                                     item->get_carbs() },
+                                     0);
             table_model->setData(table_model->index(0, table_model->weight_idx()), ingredient.second);
         }
     }

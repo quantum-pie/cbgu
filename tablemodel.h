@@ -10,7 +10,7 @@
 #include <QVariant>
 
 #include <vector>
-#include <memory>
+#include <tuple>
 
 using namespace nlohmann;
 
@@ -22,6 +22,8 @@ class TableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
+    using product_list_type = std::vector<std::tuple<std::string, ProductParams, double>>;
+
     explicit TableModel(ProductDictionary & dict, QObject * parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -37,12 +39,39 @@ public:
 
     // My API
     bool create_row(int position, const QModelIndex &parent = QModelIndex());
-    bool insert_row(const std::shared_ptr<const AbstractProduct> & row, int position, const QModelIndex &parent = QModelIndex());
+
+    template<typename S, typename P>
+    bool emplace_row(S&& row_name, P&& row_data, int position, const QModelIndex &parent = QModelIndex())
+    {
+        beginInsertRows(parent, position, position);
+
+        bool res { true };
+        if(product_list.empty() && position == 0)
+        {
+            product_list.emplace_back(std::make_tuple(std::forward<S>(row_name), std::forward<P>(row_data), default_weight));
+        }
+        else if(static_cast<std::size_t>(position) <= product_list.size())
+        {
+            product_list.insert(product_list.begin() + position,
+                                std::make_tuple(std::forward<S>(row_name), std::forward<P>(row_data), default_weight));
+        }
+        else
+        {
+            res = false;
+        }
+
+        endInsertRows();
+
+        return res;
+    }
+
     bool remove_row(int position, const QModelIndex &parent = QModelIndex());
 
     json get_json() const;
 
     ProductParams summary() const;
+
+    void clear();
 
     static constexpr std::size_t name_idx()
     {
@@ -55,9 +84,9 @@ public:
     }
 
 private:
-    std::vector<std::pair<std::weak_ptr<const AbstractProduct>, double>> product_list;
+    product_list_type product_list;
     const ProductDictionary & product_dict_ref;
-    std::shared_ptr<Ingredient> dummy_product;
+    //std::shared_ptr<Ingredient> dummy_product;
 
     static const double default_weight;
 };

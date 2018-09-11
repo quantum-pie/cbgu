@@ -63,16 +63,25 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const j
     return tree_model;
 }
 
-TableModel * build_table(TableModel * table_model, ProductDictionary & dict, const json & j)
+TableModel * build_table(TableModel * table_model, const json & j)
 {
     int rows {0};
-    for(auto it = j.begin(); it != j.end(); ++it)
+    table_model->clear();
+    if(!j.is_null())
     {
-        auto item = dict.get(it.key());
-        if(item)
+        for(auto it = j.begin(); it != j.end(); ++it)
         {
-            table_model->insert_row(item, rows);
-            table_model->setData(table_model->index(rows, table_model->weight_idx()), it->get<double>());
+            auto& name = it.key();
+            const json& data = it.value();
+            table_model->emplace_row(name,
+                                     ProductParams {
+                                     data["calories"],
+                                     data["proteins"],
+                                     data["fats"],
+                                     data["carbohydrates"] },
+                                     rows);
+            table_model->setData(table_model->index(rows, table_model->weight_idx()),
+                                                    data["weight"].get<double>());
             rows++;
         }
     }
