@@ -74,7 +74,7 @@ bool AbstractTreeItem::insert_child(AbstractTreeItem * item, int position)
     if(child_items.empty() && position == 0)
     {
         item->set_parent(this);
-        child_items.emplace_back(item);
+        child_items.push_back(item);
     }
     else if(static_cast<std::size_t>(position) <= child_items.size())
     {

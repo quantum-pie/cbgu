@@ -107,7 +107,7 @@ void MainWindow::switch_or_add_meal(int meal_id)
 {
     if(meal_id == static_cast<int>(daily_user_tables.size()))
     {
-        daily_user_tables.emplace_back(new TableModel(dict));
+        daily_user_tables.push_back(new TableModel(dict));
     }
 
     current_model = daily_user_tables[static_cast<std::size_t>(meal_id)];
@@ -212,7 +212,7 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
             json j_table;
             j_table["name"] = ui->comboBox_meal->itemText(static_cast<int>(table_id)).toStdString();
             j_table["value"] = daily_user_tables[table_id]->get_json();
-            j.emplace_back(j_table);
+            j.push_back(std::move(j_table));
             delete daily_user_tables[table_id];
         }
         o << std::setw(4) << j;
@@ -265,7 +265,7 @@ void MainWindow::push_tables(int user_id, const QDate & date)
         };
 
         std::transform(daily_user_tables.begin(), daily_user_tables.end(),
-                       j.begin(), daily_user_tables.begin(), rebuild_functor);
+                       j.begin(), daily_user_tables.begin(), std::move(rebuild_functor));
 
         for(auto& j_el : j)
         {

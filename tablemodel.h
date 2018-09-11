@@ -48,12 +48,12 @@ public:
         bool res { true };
         if(product_list.empty() && position == 0)
         {
-            product_list.emplace_back(std::make_tuple(std::forward<S>(row_name), std::forward<P>(row_data), default_weight));
+            product_list.emplace_back(std::forward<S>(row_name), std::forward<P>(row_data), default_weight);
         }
         else if(static_cast<std::size_t>(position) <= product_list.size())
         {
-            product_list.insert(product_list.begin() + position,
-                                std::make_tuple(std::forward<S>(row_name), std::forward<P>(row_data), default_weight));
+            product_list.emplace(product_list.begin() + position,
+                                std::forward<S>(row_name), std::forward<P>(row_data), default_weight);
         }
         else
         {

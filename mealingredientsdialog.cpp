@@ -113,7 +113,7 @@ void MealIngredientsDialog::ok_pressed()
             auto item = product_dict_ref.get(ing_name.toStdString());
             if(item)
             {
-                ingredients.emplace_back(item, weight);
+                ingredients.emplace_back(std::move(item), weight);
             }
         }
         accept();
