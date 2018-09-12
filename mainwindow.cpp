@@ -4,16 +4,19 @@
 #include "mealsdialog.h"
 #include "meal.h"
 #include "tablemodel.h"
+#include "checkablelistmodel.h"
 #include "ingredientcompleterdelegate.h"
 #include "treeutils.h"
 
 #include <QDirIterator>
 #include <QLineEdit>
+#include <QInputDialog>
 
 #include <fstream>
 #include <iomanip>
 
 const std::string MainWindow::user_data_path { "res/usr/" };
+const ProductParams MainWindow::default_norm { 1800, 75, 75, 200 };
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow{ parent },
@@ -36,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ingredients_dialog->set_searcher([this](auto& name) { return meals_dialog->is_used(name); } );
 
     default_meals << tr("Breakfast") << tr("Lunch") << tr("Dinner") << tr("Snack");
+
+    daily_goals_list = new CheckableListModel(ui->listView);
+    ui->listView->setModel(daily_goals_list);
 
     QDirIterator it(QString::fromStdString(user_data_path), QDir::AllDirs | QDir::NoDotAndDotDot);
     while(it.hasNext())
@@ -70,6 +76,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_product_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_product_triggered()));
+
+    auto list_context_menu = new QMenu(ui->listView);
+    ui->listView->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    auto add_goal_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Goal"), list_context_menu);
+    auto remove_goal_action = new QAction(QIcon(":/icons/icons/garbage.png"), tr("Remove Goal"), list_context_menu);
+
+    ui->listView->addAction(add_goal_action);
+    ui->listView->addAction(remove_goal_action);
+
+    connect(add_goal_action, SIGNAL(triggered()), this, SLOT(add_goal_triggered()));
+    connect(remove_goal_action, SIGNAL(triggered()), this, SLOT(remove_goal_triggered()));
 
     connect(ui->calories_sb, SIGNAL(valueChanged(int)), this, SLOT(calories_norm_changed(int)));
     connect(ui->proteins_sb, SIGNAL(valueChanged(int)), this, SLOT(proteins_norm_changed(int)));
@@ -145,6 +163,42 @@ void MainWindow::remove_product_triggered()
     }
 }
 
+void MainWindow::add_goal_triggered()
+{
+    if(QDate::currentDate() == ui->dateEdit->date())
+    {
+        bool ok;
+        auto text = QInputDialog::getText(this, tr("New goal"),
+                                             tr("Please enter new goal name:"), QLineEdit::Normal,
+                                             QString{}, &ok);
+
+        if(ok)
+        {
+            auto std_text { text.toStdString() };
+            if(std_text.empty())
+                treeutils::empty_name_error();
+            else
+                daily_goals_list->add_row(std::move(std_text));
+        }
+
+        // TODO add to const list
+    }
+}
+
+void MainWindow::remove_goal_triggered()
+{
+    if(QDate::currentDate() == ui->dateEdit->date())
+    {
+        auto index = ui->listView->selectionModel()->currentIndex();
+        if(index.isValid())
+        {
+            daily_goals_list->remove_row(index.row());
+        }
+
+        // TODO remove from const list
+    }
+}
+
 void MainWindow::table_updated()
 {
     ProductParams summary {0, 0, 0, 0};
@@ -203,8 +257,10 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
     {
         ui->comboBox_meal->blockSignals(true);
 
+        // energy
         auto user_name = ui->comboBox_user->itemText(user_id).toStdString();
-        std::string path { user_data_path + user_name + '/' + treeutils::date_to_string(date) + ".dat" };
+        std::string user_path_prefix { user_data_path + user_name + '/' + treeutils::date_to_string(date) };
+        std::string path { user_path_prefix + ".energy" };
         std::ofstream o{ path };
         auto j = json::array();
         for(std::size_t table_id = 0; table_id < daily_user_tables.size(); ++table_id)
@@ -216,8 +272,22 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
             delete daily_user_tables[table_id];
         }
         o << std::setw(4) << j;
+        // energy end
 
-        path = user_data_path + user_name + '/' + "daily_norm.dat";
+        // goals
+        path = user_path_prefix + ".goals";
+        std::ofstream o_goals{ path };
+        o_goals << std::setw(4) << daily_goals_list->get_json();
+
+        path =  user_data_path + user_name + '/' + "goals.dat";
+        std::ofstream o_cgoals{ path };
+        o_cgoals << std::setw(4) << daily_goals_list->get_goals();
+
+        daily_goals_list->clear();
+        // goals end
+
+        // norm
+        path = user_path_prefix + ".norm";
         std::ofstream o_norm { path };
 
         json norm_j;
@@ -227,6 +297,7 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
         norm_j["carbohydrates"] = ui->carbs_sb->value();
 
         o_norm << std::setw(4) << norm_j;
+        // norm end
 
         ui->comboBox_meal->clear();
         ui->comboBox_meal->blockSignals(false);
@@ -237,8 +308,10 @@ void MainWindow::push_tables(int user_id, const QDate & date)
 {
     ui->comboBox_meal->blockSignals(true);
 
+    // energy
     auto user_name = ui->comboBox_user->itemText(user_id).toStdString();
-    std::string path = { user_data_path + user_name + '/' + treeutils::date_to_string(date) + ".dat" };
+    std::string user_prefix { user_data_path + user_name + '/' + treeutils::date_to_string(date) };
+    std::string path = { user_prefix + ".energy" };
     std::ifstream in{ path };
     auto j = json::array();
     std::size_t new_table_size;
@@ -271,20 +344,54 @@ void MainWindow::push_tables(int user_id, const QDate & date)
         {
             ui->comboBox_meal->addItem(QString::fromStdString(j_el["name"]));
         }
-    }
+    }    
+    // energy end
 
-    path = user_data_path + user_name + '/' + "daily_norm.dat";
-    std::ifstream o_norm { path };
-    if(o_norm.good())
+    // goals
+    path = user_prefix + ".goals";
+    std::ifstream in_goals{ path };
+    if(in_goals.good())
+    {
+        json j_goals;
+        in_goals >> j_goals;
+
+        treeutils::build_list(daily_goals_list, j_goals);
+    }
+    else
+    {
+        path =  user_data_path + user_name + '/' + "goals.dat";
+        std::ifstream in_cgoals{ path };
+        if(in_cgoals.good())
+        {
+            json j_cgoals;
+            in_cgoals >> j_cgoals;
+
+            treeutils::build_list(daily_goals_list, j_cgoals);
+        }
+    }
+    // goals end
+
+    // norm
+    path = user_prefix + ".norm";
+    std::ifstream in_norm { path };
+    if(in_norm.good())
     {
         json j_norm;
-        o_norm >> j_norm;
+        in_norm >> j_norm;
 
         ui->calories_sb->setValue(j_norm["calories"]);
         ui->proteins_sb->setValue(j_norm["proteins"]);
         ui->fats_sb->setValue(j_norm["fats"]);
         ui->carbs_sb->setValue(j_norm["carbohydrates"]);
     }
+    else
+    {
+        ui->calories_sb->setValue(default_norm.calories);
+        ui->proteins_sb->setValue(default_norm.proteins);
+        ui->fats_sb->setValue(default_norm.fats);
+        ui->carbs_sb->setValue(default_norm.carbs);
+    }
+    // norm end
 
     ui->comboBox_meal->blockSignals(false);
     switch_or_add_meal(ui->comboBox_meal->currentIndex());

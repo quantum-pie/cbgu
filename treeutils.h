@@ -10,6 +10,7 @@ using namespace nlohmann;
 class TreeModel;
 class TableModel;
 class ProductDictionary;
+class CheckableListModel;
 
 namespace treeutils
 {
@@ -18,6 +19,8 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict,
                   const json & j, const QModelIndex & index = QModelIndex{});
 
 TableModel * build_table(TableModel * table_model, const json & j);
+
+CheckableListModel * build_list(CheckableListModel * list_model, const json & j);
 
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name);
 

@@ -86,7 +86,6 @@ public:
 private:
     product_list_type product_list;
     const ProductDictionary & product_dict_ref;
-    //std::shared_ptr<Ingredient> dummy_product;
 
     static const double default_weight;
 };

@@ -7,6 +7,7 @@
 #include <QDate>
 
 #include "productdictionary.h"
+#include "abstractproduct.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,6 +16,7 @@ class MainWindow;
 class IngredientsDialog;
 class MealsDialog;
 class TableModel;
+class CheckableListModel;
 class QLineEdit;
 
 class MainWindow : public QMainWindow
@@ -31,6 +33,8 @@ private slots:
     void switch_date(const QDate & new_date);
     void add_product_triggered();
     void remove_product_triggered();
+    void add_goal_triggered();
+    void remove_goal_triggered();
     void table_updated();
     void calories_norm_changed(int norm);
     void proteins_norm_changed(int norm);
@@ -53,11 +57,13 @@ private:
     ProductDictionary dict;
     std::vector<TableModel *> daily_user_tables;
     TableModel * current_model;
+    CheckableListModel * daily_goals_list;
     QDate prev_date;
     int prev_user;
     int user_count;
 
     static const std::string user_data_path;
+    static const ProductParams default_norm;
 };
 
 #endif // MAINWINDOW_H

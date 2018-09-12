@@ -1,6 +1,7 @@
 #include "treeutils.h"
 #include "treemodel.h"
 #include "tablemodel.h"
+#include "checkablelistmodel.h"
 #include "categorytreeitem.h"
 #include "ingredienttreeitem.h"
 #include "mealtreeitem.h"
@@ -80,12 +81,27 @@ TableModel * build_table(TableModel * table_model, const json & j)
                                      data["fats"],
                                      data["carbohydrates"] },
                                      rows);
-            table_model->setData(table_model->index(rows, table_model->weight_idx()),
+            table_model->setData(table_model->index(rows++, table_model->weight_idx()),
                                                     data["weight"].get<double>());
-            rows++;
         }
     }
     return table_model;
+}
+
+CheckableListModel * build_list(CheckableListModel * list_model, const json & j)
+{
+    int rows {0};
+    list_model->clear();
+    if(!j.is_null())
+    {
+        for(auto it = j.begin(); it != j.end(); ++it)
+        {
+            auto checked = it.value() ? Qt::Checked : Qt::Unchecked;
+            list_model->add_row(it.key());
+            list_model->setData(list_model->index(rows++), checked, Qt::CheckStateRole);
+        }
+    }
+    return list_model;
 }
 
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)

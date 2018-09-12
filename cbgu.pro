@@ -42,7 +42,8 @@ SOURCES += \
     mealingredientsdialog.cpp \
     tablemodel.cpp \
     sortednames.cpp \
-    ingredientcompleterdelegate.cpp
+    ingredientcompleterdelegate.cpp \
+    checkablelistmodel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     mealingredientsdialog.h \
     tablemodel.h \
     sortednames.h \
-    ingredientcompleterdelegate.h
+    ingredientcompleterdelegate.h \
+    checkablelistmodel.h
 
 FORMS += \
         mainwindow.ui \
