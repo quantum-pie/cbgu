@@ -9,5 +9,7 @@
         <file>icons/add.png</file>
         <file>icons/list.png</file>
         <file>icons/warning.png</file>
+        <file>icons/rgb.png</file>
+        <file>icons/success.png</file>
     </qresource>
 </RCC>
