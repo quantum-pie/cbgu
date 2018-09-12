@@ -63,7 +63,6 @@ private:
     int user_count;
 
     static const std::string user_data_path;
-    static const ProductParams default_norm;
 };
 
 #endif // MAINWINDOW_H

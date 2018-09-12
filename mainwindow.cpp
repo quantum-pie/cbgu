@@ -16,7 +16,6 @@
 #include <iomanip>
 
 const std::string MainWindow::user_data_path { "res/usr/" };
-const ProductParams MainWindow::default_norm { 1800, 75, 75, 200 };
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow{ parent },
@@ -165,37 +164,27 @@ void MainWindow::remove_product_triggered()
 
 void MainWindow::add_goal_triggered()
 {
-    if(QDate::currentDate() == ui->dateEdit->date())
+    bool ok;
+    auto text = QInputDialog::getText(this, tr("New goal"),
+                                         tr("Please enter new goal name:"), QLineEdit::Normal,
+                                         QString{}, &ok);
+
+    if(ok)
     {
-        bool ok;
-        auto text = QInputDialog::getText(this, tr("New goal"),
-                                             tr("Please enter new goal name:"), QLineEdit::Normal,
-                                             QString{}, &ok);
-
-        if(ok)
-        {
-            auto std_text { text.toStdString() };
-            if(std_text.empty())
-                treeutils::empty_name_error();
-            else
-                daily_goals_list->add_row(std::move(std_text));
-        }
-
-        // TODO add to const list
+        auto std_text { text.toStdString() };
+        if(std_text.empty())
+            treeutils::empty_name_error();
+        else
+            daily_goals_list->add_row(std::move(std_text));
     }
 }
 
 void MainWindow::remove_goal_triggered()
 {
-    if(QDate::currentDate() == ui->dateEdit->date())
+    auto index = ui->listView->selectionModel()->currentIndex();
+    if(index.isValid())
     {
-        auto index = ui->listView->selectionModel()->currentIndex();
-        if(index.isValid())
-        {
-            daily_goals_list->remove_row(index.row());
-        }
-
-        // TODO remove from const list
+        daily_goals_list->remove_row(index.row());
     }
 }
 
@@ -257,6 +246,8 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
     {
         ui->comboBox_meal->blockSignals(true);
 
+        bool today = QDate::currentDate() == date;
+
         // energy
         auto user_name = ui->comboBox_user->itemText(user_id).toStdString();
         std::string user_path_prefix { user_data_path + user_name + '/' + treeutils::date_to_string(date) };
@@ -279,9 +270,13 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
         std::ofstream o_goals{ path };
         o_goals << std::setw(4) << daily_goals_list->get_json();
 
-        path =  user_data_path + user_name + '/' + "goals.dat";
-        std::ofstream o_cgoals{ path };
-        o_cgoals << std::setw(4) << daily_goals_list->get_goals();
+        if(today)
+        {
+            // refresh tracking goals
+            path =  user_data_path + user_name + '/' + "goals.dat";
+            std::ofstream o_cgoals{ path };
+            o_cgoals << std::setw(4) << daily_goals_list->get_goals();
+        }
 
         daily_goals_list->clear();
         // goals end
@@ -297,6 +292,14 @@ void MainWindow::pull_tables(int user_id, const QDate & date)
         norm_j["carbohydrates"] = ui->carbs_sb->value();
 
         o_norm << std::setw(4) << norm_j;
+
+        if(today)
+        {
+            // refresh tracking norms
+            path =  user_data_path + user_name + '/' + "norm.dat";
+            std::ofstream o_cnorm{ path };
+            o_cnorm << std::setw(4) << norm_j;
+        }
         // norm end
 
         ui->comboBox_meal->clear();
@@ -359,6 +362,7 @@ void MainWindow::push_tables(int user_id, const QDate & date)
     }
     else
     {
+        // TODO get rid of copy paste
         path =  user_data_path + user_name + '/' + "goals.dat";
         std::ifstream in_cgoals{ path };
         if(in_cgoals.good())
@@ -386,14 +390,32 @@ void MainWindow::push_tables(int user_id, const QDate & date)
     }
     else
     {
-        ui->calories_sb->setValue(default_norm.calories);
-        ui->proteins_sb->setValue(default_norm.proteins);
-        ui->fats_sb->setValue(default_norm.fats);
-        ui->carbs_sb->setValue(default_norm.carbs);
+        // TODO get rid of copy paste
+        path =  user_data_path + user_name + '/' + "norm.dat";
+        std::ifstream in_cnorm{ path };
+        if(in_cnorm.good())
+        {
+            json j_norm;
+            in_cnorm >> j_norm;
+
+            ui->calories_sb->setValue(j_norm["calories"]);
+            ui->proteins_sb->setValue(j_norm["proteins"]);
+            ui->fats_sb->setValue(j_norm["fats"]);
+            ui->carbs_sb->setValue(j_norm["carbohydrates"]);
+        }
     }
     // norm end
 
     ui->comboBox_meal->blockSignals(false);
+
+    bool today = (QDate::currentDate() == date);
+    ui->listView->setEnabled(today);
+    ui->tableView->setEnabled(today);
+    ui->calories_sb->setEnabled(today);
+    ui->proteins_sb->setEnabled(today);
+    ui->fats_sb->setEnabled(today);
+    ui->carbs_sb->setEnabled(today);
+
     switch_or_add_meal(ui->comboBox_meal->currentIndex());
 }
 
