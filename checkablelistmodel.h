@@ -5,6 +5,9 @@
 
 #include <QAbstractListModel>
 #include <QModelIndex>
+#include <QColor>
+
+#include <tuple>
 
 using namespace nlohmann;
 
@@ -22,12 +25,12 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     // My API
-    template<typename S>
-    void add_row(S&& data)
+    template<typename S, typename Q>
+    void add_row(S&& name, Q&& color)
     {
         beginInsertRows(QModelIndex{}, 0, 0);
         insertRow(0);
-        list.emplace_back(std::forward<S>(data), false);
+        list.emplace_back(std::forward<S>(name), false, std::forward<Q>(color));
         endInsertRows();
     }
 
@@ -37,6 +40,6 @@ public:
     void clear();
 
 private:
-    std::vector<std::pair<std::string, bool>> list;
+    std::vector<std::tuple<std::string, bool, QColor>> list;
 };
 #endif // CHECKABLELISTMODEL_H

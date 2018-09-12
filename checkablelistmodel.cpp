@@ -22,10 +22,12 @@ QVariant CheckableListModel::data(const QModelIndex &index, int role) const
     switch(role)
     {
     case Qt::CheckStateRole:
-        return list[index.row()].second ?
+        return std::get<1>(list[index.row()]) ?
                     Qt::Checked : Qt::Unchecked;
     case Qt::DisplayRole:
-        return QString::fromStdString(list[index.row()].first);
+        return QString::fromStdString(std::get<0>(list[index.row()]));
+    case Qt::BackgroundColorRole:
+        return std::get<2>(list[index.row()]);
     default:
         return QVariant{};
     }
@@ -38,13 +40,9 @@ bool CheckableListModel::setData(const QModelIndex &index, const QVariant &value
 
     switch(role)
     {
-    case Qt::EditRole:
-        list[index.row()].first = value.toString().toStdString();
-        emit dataChanged(index, index);
-        return true;
     case Qt::CheckStateRole:
     {
-        list[index.row()].second = (value.toInt() == Qt::Checked);
+        std::get<1>(list[index.row()]) = (value.toInt() == Qt::Checked);
         emit dataChanged(index, index);
         return true;
     }
@@ -75,7 +73,10 @@ json CheckableListModel::get_json() const
     json j;
     for(auto & item : list)
     {
-        j[item.first] = item.second;
+        json j_it;
+        j_it["checked"] = std::get<1>(item);
+        j_it["color"] = std::get<2>(item).name().toStdString();
+        j[std::get<0>(item)] = j_it;
     }
     return j;
 }
@@ -85,7 +86,10 @@ json CheckableListModel::get_goals() const
     json j;
     for(auto & item : list)
     {
-        j[item.first] = false;
+        json j_it;
+        j_it["checked"] = false;
+        j_it["color"] = QColor(Qt::white).name().toStdString();
+        j[std::get<0>(item)] = j_it;
     }
     return j;
 }
