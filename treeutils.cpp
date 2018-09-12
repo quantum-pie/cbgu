@@ -96,8 +96,9 @@ CheckableListModel * build_list(CheckableListModel * list_model, const json & j)
     {
         for(auto it = j.begin(); it != j.end(); ++it)
         {
-            auto checked = it.value() ? Qt::Checked : Qt::Unchecked;
-            list_model->add_row(it.key());
+            auto val = it.value();
+            auto checked = val["checked"] ? Qt::Checked : Qt::Unchecked;
+            list_model->add_row(it.key(), QString::fromStdString(val["color"]));
             list_model->setData(list_model->index(rows++), checked, Qt::CheckStateRole);
         }
     }
