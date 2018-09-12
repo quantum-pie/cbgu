@@ -7,6 +7,7 @@
 #include "checkablelistmodel.h"
 #include "ingredientcompleterdelegate.h"
 #include "treeutils.h"
+#include "goaldialog.h"
 
 #include <QDirIterator>
 #include <QLineEdit>
@@ -164,18 +165,16 @@ void MainWindow::remove_product_triggered()
 
 void MainWindow::add_goal_triggered()
 {
-    bool ok;
-    auto text = QInputDialog::getText(this, tr("New goal"),
-                                         tr("Please enter new goal name:"), QLineEdit::Normal,
-                                         QString{}, &ok);
+    GoalDialog goals;
+    int res = goals.exec();
 
-    if(ok)
+    if(res == QDialog::Accepted)
     {
-        auto std_text { text.toStdString() };
-        if(std_text.empty())
+        auto result = goals.get_result();
+        if(result.first.empty())
             treeutils::empty_name_error();
         else
-            daily_goals_list->add_row(std::move(std_text));
+            daily_goals_list->add_row(std::move(result.first), std::move(result.second));
     }
 }
 
