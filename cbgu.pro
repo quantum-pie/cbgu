@@ -43,7 +43,8 @@ SOURCES += \
     tablemodel.cpp \
     sortednames.cpp \
     ingredientcompleterdelegate.cpp \
-    checkablelistmodel.cpp
+    checkablelistmodel.cpp \
+    goaldialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -65,13 +66,15 @@ HEADERS += \
     tablemodel.h \
     sortednames.h \
     ingredientcompleterdelegate.h \
-    checkablelistmodel.h
+    checkablelistmodel.h \
+    goaldialog.h
 
 FORMS += \
         mainwindow.ui \
     ingredientsdialog.ui \
     mealsdialog.ui \
-    mealingredientsdialog.ui
+    mealingredientsdialog.ui \
+    goaldialog.ui
 
 RESOURCES += \
     resources.qrc
