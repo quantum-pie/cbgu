@@ -22,6 +22,8 @@ TableModel * build_table(TableModel * table_model, const json & j);
 
 CheckableListModel * build_list(CheckableListModel * list_model, const json & j);
 
+CheckableListModel * build_optimist_list(CheckableListModel * list_model, const json & j);
+
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name);
 
 void empty_name_error();
