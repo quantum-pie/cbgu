@@ -18,6 +18,7 @@ class MealsDialog;
 class TableModel;
 class CheckableListModel;
 class QLineEdit;
+class BulletinCalendar;
 
 class MainWindow : public QMainWindow
 {
@@ -58,6 +59,8 @@ private:
     std::vector<TableModel *> daily_user_tables;
     TableModel * current_model;
     CheckableListModel * daily_goals_list;
+    BulletinCalendar * bulletin;
+
     QDate prev_date;
     int prev_user;
     int user_count;

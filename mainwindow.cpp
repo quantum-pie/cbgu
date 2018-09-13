@@ -8,6 +8,7 @@
 #include "ingredientcompleterdelegate.h"
 #include "treeutils.h"
 #include "goaldialog.h"
+#include "bulletincalendar.h"
 
 #include <QDirIterator>
 #include <QLineEdit>
@@ -49,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboBox_user->addItem(it.next().split("/").last());
     }
 
+    bulletin = new BulletinCalendar(user_data_path);
+    ui->tab_3->layout()->addWidget(bulletin);
+
     user_count = ui->comboBox_user->count();
     if(user_count)
     {
@@ -56,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboBox_meal->setEnabled(true);
         prev_user = 0;
         push_tables(prev_user, ui->dateEdit->date());
+        bulletin->user_changed(ui->comboBox_user->currentText());
     }
 
     connect(ui->actionIngredients, SIGNAL(triggered(bool)), ingredients_dialog, SLOT(show()));
@@ -63,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->dateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(switch_date(QDate)));
     connect(ui->comboBox_user, SIGNAL(currentIndexChanged(int)), this, SLOT(switch_or_add_user(int)));
+    connect(ui->comboBox_user, SIGNAL(currentTextChanged(QString)), bulletin, SLOT(user_changed(const QString &)));
     connect(ui->comboBox_meal, SIGNAL(currentIndexChanged(int)), this, SLOT(switch_or_add_meal(int)));
 
     auto table_context_menu = new QMenu(ui->tableView);
