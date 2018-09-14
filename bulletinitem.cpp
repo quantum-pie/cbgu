@@ -43,7 +43,8 @@ void BulletinItem::set_calories(const json& j)
     {
         for(auto & j_m : j_el["value"])
         {
-            cal += j_m["calories"].get<double>();
+            double portion = j_m["weight"].get<double>() / 100.0;
+            cal += j_m["calories"].get<double>() * portion;
         }
     }
     calories = static_cast<int>(cal);
@@ -56,18 +57,25 @@ void BulletinItem::set_day(int new_day)
 
 void BulletinItem::paintEvent(QPaintEvent *)
 {
+    static const int capacity_threshold = 10;
+
     const int w = width();
     const int h = height();
-    const double dh = h;
+
+    const int text_height { 10 };
 
     const int rect_width { w };
-    int rect_height;
-    if(goals.size() < 10)
-        rect_height = std::round(dh / 10);
+    int rect_height, pixels_left;
+    if(goals.size() > capacity_threshold)
+    {
+        rect_height = h / goals.size();
+        pixels_left = h - rect_height * goals.size();
+    }
     else
-        rect_height = std::round(dh / goals.size());
-
-    static const int text_height { 20 };
+    {
+        rect_height = h / capacity_threshold;
+        pixels_left = h - rect_height * capacity_threshold;
+    }
 
     int rect_y { h - rect_height };
     QPainter painter(this);
@@ -78,15 +86,21 @@ void BulletinItem::paintEvent(QPaintEvent *)
     {
         grad.setColorAt(0.0, color);
         painter.setBrush(QBrush(grad));
-        painter.drawRect(0, rect_y, rect_width, rect_height);
-        rect_y -= rect_height;
+
+        int height_stretch = (pixels_left--) > 0 ? 1 : 0;
+
+        painter.drawRect(0, rect_y, rect_width, rect_height + height_stretch);
+        rect_y -= (rect_height + height_stretch);
     }
 
     painter.setPen(Qt::black);
     painter.setBrush(Qt::NoBrush);
+    auto current_font = painter.font();
+    current_font.setPointSize(9);
+    painter.setFont(current_font);
 
-    painter.drawText(0, 0, w - text_height, text_height, Qt::AlignVCenter | Qt::AlignRight, QString::number(day));
-    painter.drawText(0, h - text_height, w - text_height, text_height, Qt::AlignVCenter | Qt::AlignRight, QString::number(calories));
+    painter.drawText(0, 0.5 * text_height, w - 0.5 * text_height, text_height, Qt::AlignVCenter | Qt::AlignRight, QString::number(day));
+    painter.drawText(0, h - 1.5 * text_height, w - 0.5 * text_height, text_height, Qt::AlignVCenter | Qt::AlignRight, QString::number(calories));
     painter.drawRect(0, 0, w - 1, h - 1);
 }
 
