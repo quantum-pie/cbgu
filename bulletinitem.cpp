@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QLinearGradient>
 
+#include <cmath>
+
 BulletinItem::BulletinItem(QWidget * parent) :
     QWidget{ parent },
     ui{ new Ui::BulletinItem }
@@ -56,13 +58,14 @@ void BulletinItem::paintEvent(QPaintEvent *)
 {
     const int w = width();
     const int h = height();
+    const double dh = h;
 
     const int rect_width { w };
     int rect_height;
     if(goals.size() < 10)
-        rect_height = h / 10;
+        rect_height = std::round(dh / 10);
     else
-        rect_height = h / goals.size();
+        rect_height = std::round(dh / goals.size());
 
     static const int text_height { 20 };
 
