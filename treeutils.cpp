@@ -105,25 +105,6 @@ CheckableListModel * build_list(CheckableListModel * list_model, const json & j)
     return list_model;
 }
 
-CheckableListModel * build_optimist_list(CheckableListModel * list_model, const json & j)
-{
-    int rows {0};
-    list_model->clear();
-    if(!j.is_null())
-    {
-        for(auto it = j.begin(); it != j.end(); ++it)
-        {
-            auto val = it.value();
-            if(val["checked"])
-            {
-                list_model->add_row(it.key(), QString::fromStdString(val["color"]));
-                list_model->setData(list_model->index(rows++), Qt::Checked, Qt::CheckStateRole);
-            }
-        }
-    }
-    return list_model;
-}
-
 void dictionary_item_renamed(ProductDictionary & dict, const QString & old_name)
 {
     auto std_old { old_name.toStdString() };
