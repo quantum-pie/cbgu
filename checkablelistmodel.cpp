@@ -88,7 +88,7 @@ json CheckableListModel::get_goals() const
     {
         json j_it;
         j_it["checked"] = false;
-        j_it["color"] = QColor(Qt::white).name().toStdString();
+        j_it["color"] = std::get<2>(item).name().toStdString();
         j[std::get<0>(item)] = j_it;
     }
     return j;
