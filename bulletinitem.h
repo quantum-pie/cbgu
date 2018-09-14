@@ -5,13 +5,15 @@
 
 #include <QWidget>
 
-using namespace nlohmann;
+#include <vector>
 
-class CheckableListModel;
+using namespace nlohmann;
 
 namespace Ui {
 class BulletinItem;
 }
+
+class QPaintEvent;
 
 class BulletinItem : public QWidget
 {
@@ -26,8 +28,13 @@ public:
     void set_day(int day);
 
 private:
+    void paintEvent(QPaintEvent * event) override;
+
     Ui::BulletinItem * ui;
-    CheckableListModel * daily_goals_list;
+
+    int day;
+    int calories;
+    std::vector<QColor> goals;
 };
 
 #endif // BULLETINITEM_H
