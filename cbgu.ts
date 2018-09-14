@@ -170,22 +170,27 @@
         <translation>События</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="225"/>
+        <location filename="mainwindow.ui" line="221"/>
+        <source>Date:</source>
+        <translation>Дата:</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="255"/>
         <source>Bulletin</source>
         <translation>Сводка</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="261"/>
+        <location filename="mainwindow.ui" line="281"/>
         <source>Library</source>
         <translation>Библиотека</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="283"/>
+        <location filename="mainwindow.ui" line="303"/>
         <source>Ingredients</source>
         <translation>Ингредиенты</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="292"/>
+        <location filename="mainwindow.ui" line="312"/>
         <source>Meals</source>
         <translation>Блюда</translation>
     </message>
