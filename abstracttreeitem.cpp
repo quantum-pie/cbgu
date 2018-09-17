@@ -1,4 +1,5 @@
 #include "abstracttreeitem.h"
+#include "treeutils.h"
 
 QVariant productd_data(std::shared_ptr<const AbstractProduct> product, int column)
 {
@@ -7,13 +8,13 @@ QVariant productd_data(std::shared_ptr<const AbstractProduct> product, int colum
     case 0:
         return QString::fromStdString(product->get_name());
     case 1:
-        return product->get_calories();
+        return treeutils::format_number(product->get_calories());
     case 2:
-        return product->get_proteins();
+        return treeutils::format_number(product->get_proteins());
     case 3:
-        return product->get_fats();
+        return treeutils::format_number(product->get_fats());
     case 4:
-        return product->get_carbs();
+        return treeutils::format_number(product->get_carbs());
     default:
         return QVariant{};
     }
