@@ -227,12 +227,12 @@
     <message>
         <location filename="mainwindow.cpp" line="89"/>
         <source>Add Goal</source>
-        <translation>Добавить цель</translation>
+        <translation>Добавить событие</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="90"/>
         <source>Remove Goal</source>
-        <translation>Удалить цель</translation>
+        <translation>Удалить событие</translation>
     </message>
 </context>
 <context>
