@@ -27,7 +27,7 @@ QVariant CheckableListModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         return QString::fromStdString(std::get<0>(list[index.row()]));
     case Qt::BackgroundColorRole:
-        return std::get<2>(list[index.row()]);
+        return std::get<1>(list[index.row()]) ? std::get<2>(list[index.row()]) : Qt::lightGray;
     default:
         return QVariant{};
     }
