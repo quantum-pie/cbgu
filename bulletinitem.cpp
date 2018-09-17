@@ -77,20 +77,18 @@ void BulletinItem::paintEvent(QPaintEvent *)
         pixels_left = h - rect_height * capacity_threshold;
     }
 
-    int rect_y { h - rect_height };
+    int rect_y { h };
     QPainter painter(this);
     painter.setPen(Qt::white);
     QLinearGradient grad(0, 0, rect_width, 0);
     grad.setColorAt(1.0, Qt::white);
     for(const auto & color : goals)
     {
+        int height_stretch = (pixels_left--) > 0 ? 1 : 0;
+        rect_y -= (rect_height + height_stretch);
         grad.setColorAt(0.0, color);
         painter.setBrush(QBrush(grad));
-
-        int height_stretch = (pixels_left--) > 0 ? 1 : 0;
-
         painter.drawRect(0, rect_y, rect_width, rect_height + height_stretch);
-        rect_y -= (rect_height + height_stretch);
     }
 
     painter.setPen(Qt::black);
