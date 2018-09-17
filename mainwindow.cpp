@@ -33,7 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto completer_delegate = new IngredientCompleterDelegate(dict, ui->tableView);
     ui->tableView->setItemDelegate(completer_delegate);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     ingredients_dialog = new IngredientsDialog{ dict };
     meals_dialog = new MealsDialog{ dict };
@@ -201,10 +202,10 @@ void MainWindow::table_updated()
         summary += table->summary();
     }
 
-    ui->calories_le->setText(QString::number(static_cast<unsigned>(summary.calories)));
-    ui->proteins_le->setText(QString::number(static_cast<unsigned>(summary.proteins)));
-    ui->fats_le->setText(QString::number(static_cast<unsigned>(summary.fats)));
-    ui->carbs_le->setText(QString::number(static_cast<unsigned>(summary.carbs)));
+    ui->calories_le->setText(QString::number(static_cast<unsigned>(std::round(summary.calories))));
+    ui->proteins_le->setText(QString::number(static_cast<unsigned>(std::round(summary.proteins))));
+    ui->fats_le->setText(QString::number(static_cast<unsigned>(std::round(summary.fats))));
+    ui->carbs_le->setText(QString::number(static_cast<unsigned>(std::round(summary.carbs))));
 
     update_status(ui->calories_le, ui->calories_sb->value());
     update_status(ui->proteins_le, ui->proteins_sb->value());
