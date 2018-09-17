@@ -196,4 +196,9 @@ std::string date_to_string(const QDate & date)
            std::to_string(date.year());
 }
 
+QString format_number(double number)
+{
+    return QString::number(number, 'f', 1);
+}
+
 }

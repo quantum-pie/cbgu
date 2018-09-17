@@ -38,6 +38,8 @@ bool delete_question();
 
 std::string date_to_string(const QDate & date);
 
+QString format_number(double number);
+
 }
 
 #endif // TREEUTILS_H
