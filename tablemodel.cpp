@@ -28,20 +28,22 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
     auto& params = std::get<1>(product_list[idx]);
     auto weight = std::get<2>(product_list[idx]);
 
+    double portion { weight / 100.0 };
+
     switch(index.column())
     {
     case 0:
         return QString::fromStdString(name);
     case 1:
-        return params.calories;
+        return treeutils::format_number(params.calories * portion);
     case 2:
-        return params.proteins;
+        return treeutils::format_number(params.proteins * portion);
     case 3:
-        return params.fats;
+        return treeutils::format_number(params.fats * portion);
     case 4:
-        return params.carbs;
+        return treeutils::format_number(params.carbs * portion);
     case 5:
-        return weight;
+        return treeutils::format_number(weight);
     default:
         return QVariant{};
     }
