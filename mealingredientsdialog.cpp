@@ -52,7 +52,8 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, s
 
     ui->tableView->addAction(add_ingredient_action);
     ui->tableView->addAction(remove_ingredient_action);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_ingredient_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_ingredient_triggered()));
