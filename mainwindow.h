@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QDate>
 
+#include "tablemodel.h"
 #include "productdictionary.h"
 #include "abstractproduct.h"
 
@@ -15,7 +16,6 @@ class MainWindow;
 
 class IngredientsDialog;
 class MealsDialog;
-class TableModel;
 class CheckableListModel;
 class QLineEdit;
 class BulletinCalendar;
@@ -57,6 +57,7 @@ private:
     QStringList default_meals;
     ProductDictionary dict;
     std::vector<TableModel *> daily_user_tables;
+    TableModel aggregate_table;
     TableModel * current_model;
     CheckableListModel * daily_goals_list;
     BulletinCalendar * bulletin;

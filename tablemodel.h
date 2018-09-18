@@ -22,7 +22,7 @@ class TableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    using product_list_type = std::vector<std::tuple<std::string, ProductParams, double>>;
+    using product_list_type = std::vector<std::tuple<std::string, ProductParams, double, bool>>;
 
     explicit TableModel(ProductDictionary & dict, QObject * parent = nullptr);
 
@@ -41,19 +41,19 @@ public:
     bool create_row(int position, const QModelIndex &parent = QModelIndex());
 
     template<typename S, typename P>
-    bool emplace_row(S&& row_name, P&& row_data, int position, const QModelIndex &parent = QModelIndex())
+    bool emplace_row(S&& row_name, P&& row_data, int position, double weight = default_weight, bool is_bold = false, const QModelIndex &parent = QModelIndex())
     {
         beginInsertRows(parent, position, position);
 
         bool res { true };
         if(product_list.empty() && position == 0)
         {
-            product_list.emplace_back(std::forward<S>(row_name), std::forward<P>(row_data), default_weight);
+            product_list.emplace_back(std::forward<S>(row_name), std::forward<P>(row_data), weight, is_bold);
         }
         else if(static_cast<std::size_t>(position) <= product_list.size())
         {
             product_list.emplace(product_list.begin() + position,
-                                std::forward<S>(row_name), std::forward<P>(row_data), default_weight);
+                                std::forward<S>(row_name), std::forward<P>(row_data), weight, is_bold);
         }
         else
         {
@@ -70,6 +70,7 @@ public:
     json get_json() const;
 
     ProductParams summary() const;
+    double total_weight() const;
 
     void clear();
 

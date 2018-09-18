@@ -66,8 +66,8 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const j
 
 TableModel * build_table(TableModel * table_model, const json & j)
 {
-    int rows {0};
-    table_model->clear();
+    int rows { table_model->rowCount() };
+    //table_model->clear();
     if(!j.is_null())
     {
         for(auto it = j.begin(); it != j.end(); ++it)
@@ -80,9 +80,8 @@ TableModel * build_table(TableModel * table_model, const json & j)
                                      data["proteins"],
                                      data["fats"],
                                      data["carbohydrates"] },
-                                     rows);
-            table_model->setData(table_model->index(rows++, table_model->weight_idx()),
-                                                    data["weight"].get<double>());
+                                     rows++,
+                                     data["weight"].get<double>());
         }
     }
     return table_model;

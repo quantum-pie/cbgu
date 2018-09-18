@@ -3,6 +3,8 @@
 #include "productdictionary.h"
 #include "treeutils.h"
 
+#include <QFont>
+
 const double TableModel::default_weight { 100 };
 
 TableModel::TableModel(ProductDictionary & dict, QObject * parent)
@@ -20,13 +22,21 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
     if(!index.isValid())
         return QVariant{};
 
-    if(role != Qt::DisplayRole && role != Qt::EditRole)
+    if(role != Qt::DisplayRole && role != Qt::EditRole && role != Qt::FontRole)
         return QVariant{};
 
     auto idx { static_cast<std::size_t>(index.row()) };
     auto& name = std::get<0>(product_list[idx]);
     auto& params = std::get<1>(product_list[idx]);
     auto weight = std::get<2>(product_list[idx]);
+    auto is_bold = std::get<3>(product_list[idx]);
+
+    if(is_bold && role == Qt::FontRole)
+    {
+        QFont font;
+        font.setBold(true);
+        return font;
+    }
 
     double portion { weight / 100.0 };
 
@@ -88,7 +98,7 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
 
 bool TableModel::create_row(int position, const QModelIndex &parent)
 {
-    return emplace_row("", ProductParams{0, 0, 0, 0}, position, parent);
+    return emplace_row("", ProductParams{0, 0, 0, 0}, position, default_weight, false, parent);
 }
 
 bool TableModel::remove_row(int position, const QModelIndex &parent)
@@ -182,6 +192,16 @@ ProductParams TableModel::summary() const
         params.carbs += par.carbs * portion;
     }
     return params;
+}
+
+double TableModel::total_weight() const
+{
+    double result {0};
+    for(auto & product : product_list)
+    {
+        result += std::get<2>(product);
+    }
+    return result;
 }
 
 void TableModel::clear()

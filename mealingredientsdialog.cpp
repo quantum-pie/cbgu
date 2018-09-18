@@ -39,8 +39,8 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, s
                                      item->get_proteins(),
                                      item->get_fats(),
                                      item->get_carbs() },
-                                     0);
-            table_model->setData(table_model->index(0, table_model->weight_idx()), ingredient.second);
+                                     0,
+                                     ingredient.second);
         }
     }
 
