@@ -51,6 +51,9 @@ private:
 
     void update_status(QLineEdit * le, int norm);
 
+    bool build_goals(const std::string & path);
+    bool build_norm(const std::string & path);
+
     Ui::MainWindow * ui;
     IngredientsDialog * ingredients_dialog;
     MealsDialog * meals_dialog;

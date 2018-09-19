@@ -292,6 +292,39 @@ void MainWindow::update_status(QLineEdit * le, int norm)
     le->setPalette(palette);
 }
 
+bool MainWindow::build_goals(const std::string & path)
+{
+    std::ifstream in_goals{ path };
+    if(in_goals.good())
+    {
+        json j_goals;
+        in_goals >> j_goals;
+
+        treeutils::build_list(daily_goals_list, j_goals);
+
+        return true;
+    }
+    else return false;
+}
+
+bool MainWindow::build_norm(const std::string & path)
+{
+    std::ifstream in_norm { path };
+    if(in_norm.good())
+    {
+        json j_norm;
+        in_norm >> j_norm;
+
+        ui->calories_sb->setValue(j_norm["calories"]);
+        ui->proteins_sb->setValue(j_norm["proteins"]);
+        ui->fats_sb->setValue(j_norm["fats"]);
+        ui->carbs_sb->setValue(j_norm["carbohydrates"]);
+
+        return true;
+    }
+    else return false;
+}
+
 void MainWindow::pull_tables(int user_id, const QDate & date)
 {
     if(user_id != -1)
@@ -404,58 +437,16 @@ void MainWindow::push_tables(int user_id, const QDate & date)
     // energy end
 
     // goals
-    path = user_prefix + ".goals";
-    std::ifstream in_goals{ path };
-    if(in_goals.good())
+    if(!build_goals(user_prefix + ".goals"))
     {
-        json j_goals;
-        in_goals >> j_goals;
-
-        treeutils::build_list(daily_goals_list, j_goals);
-    }
-    else
-    {
-        // TODO get rid of copy paste
-        path =  user_data_path + user_name + '/' + "goals.dat";
-        std::ifstream in_cgoals{ path };
-        if(in_cgoals.good())
-        {
-            json j_cgoals;
-            in_cgoals >> j_cgoals;
-
-            treeutils::build_list(daily_goals_list, j_cgoals);
-        }
+        build_goals(user_data_path + user_name + '/' + "goals.dat");
     }
     // goals end
 
     // norm
-    path = user_prefix + ".norm";
-    std::ifstream in_norm { path };
-    if(in_norm.good())
+    if(!build_norm(user_prefix + ".norm"))
     {
-        json j_norm;
-        in_norm >> j_norm;
-
-        ui->calories_sb->setValue(j_norm["calories"]);
-        ui->proteins_sb->setValue(j_norm["proteins"]);
-        ui->fats_sb->setValue(j_norm["fats"]);
-        ui->carbs_sb->setValue(j_norm["carbohydrates"]);
-    }
-    else
-    {
-        // TODO get rid of copy paste
-        path =  user_data_path + user_name + '/' + "norm.dat";
-        std::ifstream in_cnorm{ path };
-        if(in_cnorm.good())
-        {
-            json j_norm;
-            in_cnorm >> j_norm;
-
-            ui->calories_sb->setValue(j_norm["calories"]);
-            ui->proteins_sb->setValue(j_norm["proteins"]);
-            ui->fats_sb->setValue(j_norm["fats"]);
-            ui->carbs_sb->setValue(j_norm["carbohydrates"]);
-        }
+        build_norm(user_data_path + user_name + '/' + "norm.dat");
     }
     // norm end
 
