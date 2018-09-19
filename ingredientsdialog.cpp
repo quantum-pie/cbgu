@@ -26,6 +26,7 @@ IngredientsDialog::IngredientsDialog(ProductDictionary & dict, QWidget *parent) 
 {
     ui->setupUi(this);
 
+    setWindowModality(Qt::ApplicationModal);
     setWindowTitle(tr("Ingredients Library"));
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 

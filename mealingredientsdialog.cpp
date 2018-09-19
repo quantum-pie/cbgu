@@ -18,6 +18,7 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, s
 {
     ui->setupUi(this);
 
+    setWindowModality(Qt::ApplicationModal);
     setWindowTitle(tr("Edit Meal"));
 
     table_model = new TableModel(product_dict, ui->tableView);
@@ -33,13 +34,13 @@ MealIngredientsDialog::MealIngredientsDialog(ProductDictionary & product_dict, s
         for(auto& ingredient : meal->get_ingredients())
         {
             auto item = ingredient.first;
-            table_model->emplace_row(item->get_name(),
+            table_model->emplace_row(table_model->rowCount(),
+                                     item->get_name(),
                                      ProductParams {
                                      item->get_calories(),
                                      item->get_proteins(),
                                      item->get_fats(),
                                      item->get_carbs() },
-                                     0,
                                      ingredient.second);
         }
     }
@@ -79,7 +80,7 @@ std::string MealIngredientsDialog::get_name() const
 
 void MealIngredientsDialog::add_ingredient_triggered()
 {
-    table_model->create_row(0);
+    table_model->create_row(table_model->rowCount());
 }
 
 void MealIngredientsDialog::remove_ingredient_triggered()

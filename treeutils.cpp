@@ -66,21 +66,19 @@ TreeModel * build_tree(TreeModel * tree_model, ProductDictionary & dict, const j
 
 TableModel * build_table(TableModel * table_model, const json & j)
 {
-    int rows { table_model->rowCount() };
-    //table_model->clear();
     if(!j.is_null())
     {
         for(auto it = j.begin(); it != j.end(); ++it)
         {
             auto& name = it.key();
             const json& data = it.value();
-            table_model->emplace_row(name,
+            table_model->emplace_row(table_model->rowCount(),
+                                     name,
                                      ProductParams {
                                      data["calories"],
                                      data["proteins"],
                                      data["fats"],
                                      data["carbohydrates"] },
-                                     rows++,
                                      data["weight"].get<double>());
         }
     }
