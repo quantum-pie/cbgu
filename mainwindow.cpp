@@ -9,6 +9,7 @@
 #include "treeutils.h"
 #include "goaldialog.h"
 #include "bulletincalendar.h"
+#include "temporaryproductdialog.h"
 
 #include <QDirIterator>
 #include <QLineEdit>
@@ -22,7 +23,7 @@ const std::string MainWindow::user_data_path { "res/usr/" };
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow{ parent },
     ui{ new Ui::MainWindow },
-    aggregate_table{ dict },
+    aggregate_table{ dict, false },
     current_model{ nullptr },
     prev_date{ QDate::currentDate() },
     prev_user{ -1 }, user_count{ 0 }
@@ -76,12 +77,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     auto add_ingredient_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Product"), table_context_menu);
+    auto add_temporary_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Temporary"), table_context_menu);
     auto remove_ingredient_action = new QAction(QIcon(":/icons/icons/garbage.png"), tr("Remove Product"), table_context_menu);
 
     ui->tableView->addAction(add_ingredient_action);
+    ui->tableView->addAction(add_temporary_action);
     ui->tableView->addAction(remove_ingredient_action);
 
     connect(add_ingredient_action, SIGNAL(triggered()), this, SLOT(add_product_triggered()));
+    connect(add_temporary_action, SIGNAL(triggered()), this, SLOT(add_temporary_triggered()));
     connect(remove_ingredient_action, SIGNAL(triggered()), this, SLOT(remove_product_triggered()));
 
     auto list_context_menu = new QMenu(ui->listView);
@@ -133,14 +137,13 @@ void MainWindow::switch_or_add_meal(int meal_id)
     if(meal_id == 0)
     {
         aggregate_table.clear();
-        for(int idx = 0; idx < daily_user_tables.size(); ++idx)
+        for(std::size_t idx = 0; idx < daily_user_tables.size(); ++idx)
         {
-            // TODO wrong weight
             auto table = daily_user_tables[idx];
-            int row = aggregate_table.rowCount();
-            aggregate_table.emplace_row(ui->comboBox_meal->itemText(idx + 1).toStdString(),
-                                        table->summary(), row, table->total_weight(), true);
-            treeutils::build_table(&aggregate_table, table->get_json());
+            aggregate_table.emplace_row(aggregate_table.rowCount(),
+                                        ui->comboBox_meal->itemText(static_cast<int>(idx + 1)).toStdString(),
+                                        table->mean_value(),  table->total_weight(), true);
+            aggregate_table.append(table);
         }
         current_model = &aggregate_table;
     }
@@ -176,15 +179,40 @@ void MainWindow::switch_date(const QDate & new_date)
 
 void MainWindow::add_product_triggered()
 {
-    current_model->create_row(0);
+    if(current_model->is_editable())
+        current_model->create_row(current_model->rowCount());
+}
+
+void MainWindow::add_temporary_triggered()
+{
+    if(current_model->is_editable())
+    {
+        TemporaryProductDialog dlg;
+        int res = dlg.exec();
+        if(res == QDialog::Accepted)
+        {
+            auto new_product = dlg.get_result();
+            if(!new_product.first.empty())
+            {
+                current_model->emplace_row(current_model->rowCount(), std::move(new_product.first), std::move(new_product.second));
+            }
+            else
+            {
+                treeutils::empty_name_error();
+            }
+        }
+    }
 }
 
 void MainWindow::remove_product_triggered()
 {
-    auto index = ui->tableView->selectionModel()->currentIndex();
-    if(index.isValid())
+    if(current_model->is_editable())
     {
-        current_model->remove_row(index.row());
+        auto index = ui->tableView->selectionModel()->currentIndex();
+        if(index.isValid())
+        {
+            current_model->remove_row(index.row());
+        }
     }
 }
 

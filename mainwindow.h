@@ -33,6 +33,7 @@ private slots:
     void switch_or_add_meal(int meal_id);
     void switch_date(const QDate & new_date);
     void add_product_triggered();
+    void add_temporary_triggered();
     void remove_product_triggered();
     void add_goal_triggered();
     void remove_goal_triggered();
