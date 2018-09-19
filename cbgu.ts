@@ -64,42 +64,42 @@
         <translation>Добавить корневой ингредиент</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="29"/>
+        <location filename="ingredientsdialog.cpp" line="30"/>
         <source>Ingredients Library</source>
         <translation>Библиотека ингредиентов</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="49"/>
+        <location filename="ingredientsdialog.cpp" line="50"/>
         <source>Add Category</source>
         <translation>Добавить категорию</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="50"/>
+        <location filename="ingredientsdialog.cpp" line="51"/>
         <source>Add Ingredient</source>
         <translation>Добавить ингредиент</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="51"/>
+        <location filename="ingredientsdialog.cpp" line="52"/>
         <source>Remove Item</source>
         <translation>Удалить элемент</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="150"/>
+        <location filename="ingredientsdialog.cpp" line="151"/>
         <source>New category</source>
         <translation>Новая категория</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="151"/>
+        <location filename="ingredientsdialog.cpp" line="152"/>
         <source>Please enter new category name:</source>
         <translation>Введите название категории:</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="162"/>
+        <location filename="ingredientsdialog.cpp" line="163"/>
         <source>New ingredient</source>
         <translation>Новый ингредиент</translation>
     </message>
     <message>
-        <location filename="ingredientsdialog.cpp" line="163"/>
+        <location filename="ingredientsdialog.cpp" line="164"/>
         <source>Please enter new ingredient name:</source>
         <translation>Введите название ингредиента:</translation>
     </message>
@@ -122,115 +122,126 @@
         <translation>Энергетическая ценность</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="195"/>
+        <location filename="mainwindow.ui" line="78"/>
         <source>History</source>
         <translation>Рацион</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="204"/>
+        <location filename="mainwindow.ui" line="87"/>
         <source>Meal:</source>
         <translation>Прием пищи:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="42"/>
+        <location filename="mainwindow.ui" line="107"/>
         <source>Summary</source>
         <translation>Итого</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="81"/>
+        <location filename="mainwindow.ui" line="146"/>
         <source>Calories:</source>
         <translation>Калории:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="60"/>
-        <location filename="mainwindow.ui" line="100"/>
-        <location filename="mainwindow.ui" line="126"/>
-        <location filename="mainwindow.ui" line="173"/>
+        <location filename="mainwindow.ui" line="125"/>
+        <location filename="mainwindow.ui" line="165"/>
+        <location filename="mainwindow.ui" line="191"/>
+        <location filename="mainwindow.ui" line="238"/>
         <source>/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="107"/>
+        <location filename="mainwindow.ui" line="172"/>
         <source>Proteins:</source>
         <translation>Белки:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="67"/>
+        <location filename="mainwindow.ui" line="132"/>
         <source>Fats:</source>
         <translation>Жиры:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="140"/>
+        <location filename="mainwindow.ui" line="205"/>
         <source>Carbohydrates:</source>
         <translation>Углеводы:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="183"/>
+        <location filename="mainwindow.ui" line="248"/>
         <source>Goals</source>
         <translation>События</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="221"/>
+        <location filename="mainwindow.ui" line="44"/>
         <source>Date:</source>
         <translation>Дата:</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="255"/>
+        <location filename="mainwindow.ui" line="263"/>
         <source>Bulletin</source>
         <translation>Сводка</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="281"/>
+        <location filename="mainwindow.ui" line="289"/>
         <source>Library</source>
         <translation>Библиотека</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="303"/>
+        <location filename="mainwindow.ui" line="311"/>
         <source>Ingredients</source>
         <translation>Ингредиенты</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="312"/>
+        <location filename="mainwindow.ui" line="320"/>
         <source>Meals</source>
         <translation>Блюда</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="42"/>
+        <location filename="mainwindow.cpp" line="44"/>
         <source>Breakfast</source>
         <translation>Завтрак</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="42"/>
+        <location filename="mainwindow.cpp" line="44"/>
         <source>Lunch</source>
         <translation>Обед</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="42"/>
+        <location filename="mainwindow.cpp" line="44"/>
         <source>Dinner</source>
         <translation>Ужин</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="42"/>
+        <location filename="mainwindow.cpp" line="44"/>
         <source>Snack</source>
         <translation>Перекус</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="77"/>
-        <source>Add Product</source>
-        <translation>Добавить продукт</translation>
+        <location filename="mainwindow.cpp" line="44"/>
+        <location filename="mainwindow.cpp" line="398"/>
+        <source>All</source>
+        <translation>Все</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="78"/>
+        <location filename="mainwindow.cpp" line="79"/>
+        <source>Add Product</source>
+        <translation>Добавить продукт из библиотеки</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="80"/>
+        <source>Add Temporary</source>
+        <translation>Добавить временный продукт</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="81"/>
         <source>Remove Product</source>
         <translation>Удалить продукт</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="89"/>
+        <location filename="mainwindow.cpp" line="94"/>
         <source>Add Goal</source>
         <translation>Добавить событие</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="90"/>
+        <location filename="mainwindow.cpp" line="95"/>
         <source>Remove Goal</source>
         <translation>Удалить событие</translation>
     </message>
@@ -258,17 +269,17 @@
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="mealingredientsdialog.cpp" line="21"/>
+        <location filename="mealingredientsdialog.cpp" line="22"/>
         <source>Edit Meal</source>
         <translation>Состав блюда</translation>
     </message>
     <message>
-        <location filename="mealingredientsdialog.cpp" line="50"/>
+        <location filename="mealingredientsdialog.cpp" line="51"/>
         <source>Add Ingredient</source>
         <translation>Добавить ингредиент</translation>
     </message>
     <message>
-        <location filename="mealingredientsdialog.cpp" line="51"/>
+        <location filename="mealingredientsdialog.cpp" line="52"/>
         <source>Remove Ingredient</source>
         <translation>Удалить ингредиент</translation>
     </message>
@@ -305,37 +316,37 @@
         <translation>Добавить корневое блюдо</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="29"/>
+        <location filename="mealsdialog.cpp" line="30"/>
         <source>Meals Library</source>
         <translation>Библиотека блюд</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="49"/>
+        <location filename="mealsdialog.cpp" line="50"/>
         <source>Add Category</source>
         <translation>Добавить категорию</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="50"/>
+        <location filename="mealsdialog.cpp" line="51"/>
         <source>Add Meal</source>
         <translation>Добавить блюдо</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="51"/>
+        <location filename="mealsdialog.cpp" line="52"/>
         <source>Edit Meal</source>
         <translation>Изменить блюдо</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="52"/>
+        <location filename="mealsdialog.cpp" line="53"/>
         <source>Remove Item</source>
         <translation>Удалить элемент</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="186"/>
+        <location filename="mealsdialog.cpp" line="187"/>
         <source>New category</source>
         <translation>Новая категория</translation>
     </message>
     <message>
-        <location filename="mealsdialog.cpp" line="187"/>
+        <location filename="mealsdialog.cpp" line="188"/>
         <source>Please enter new category name:</source>
         <translation>Введите название категории:</translation>
     </message>
@@ -373,46 +384,46 @@
         <translation>[Нет данных]</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="130"/>
-        <location filename="treeutils.cpp" line="141"/>
-        <location filename="treeutils.cpp" line="152"/>
-        <location filename="treeutils.cpp" line="163"/>
-        <location filename="treeutils.cpp" line="174"/>
+        <location filename="treeutils.cpp" line="127"/>
+        <location filename="treeutils.cpp" line="138"/>
+        <location filename="treeutils.cpp" line="149"/>
+        <location filename="treeutils.cpp" line="160"/>
+        <location filename="treeutils.cpp" line="171"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="131"/>
+        <location filename="treeutils.cpp" line="128"/>
         <source>Product name cannot be empty</source>
         <translation>Название не задано</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="142"/>
+        <location filename="treeutils.cpp" line="139"/>
         <source>Product with such name already exists</source>
         <translation>Продукт с таким названием уже существует</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="153"/>
+        <location filename="treeutils.cpp" line="150"/>
         <source>&apos; meal use this ingredient - aborting removal</source>
         <translation>&apos; включает этот ингредиент - удаление невозможно</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="164"/>
+        <location filename="treeutils.cpp" line="161"/>
         <source>Product with such name already added to the list</source>
         <translation>Продукт с таким названием уже включен в состав</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="175"/>
+        <location filename="treeutils.cpp" line="172"/>
         <source>Meal has no ingredients</source>
         <translation>Состав блюда пуст</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="185"/>
+        <location filename="treeutils.cpp" line="182"/>
         <source>Remove Item</source>
         <translation>Удаление элемента</translation>
     </message>
     <message>
-        <location filename="treeutils.cpp" line="186"/>
+        <location filename="treeutils.cpp" line="183"/>
         <source>Are you sure you want to remove this item?</source>
         <translation>Вы уверены, что хотите удалить этот элемент?</translation>
     </message>
@@ -420,39 +431,82 @@
 <context>
     <name>TableModel</name>
     <message>
-        <location filename="tablemodel.cpp" line="68"/>
+        <location filename="tablemodel.cpp" line="81"/>
         <source>Product</source>
         <translation>Продукт</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="70"/>
+        <location filename="tablemodel.cpp" line="83"/>
         <source>Calories</source>
         <translation>Калории</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="72"/>
+        <location filename="tablemodel.cpp" line="85"/>
         <source>Proteins</source>
         <translation>Белки</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="74"/>
+        <location filename="tablemodel.cpp" line="87"/>
         <source>Fats</source>
         <translation>Жиры</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="76"/>
+        <location filename="tablemodel.cpp" line="89"/>
         <source>Carbohydrates</source>
         <translation>Углеводы</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="78"/>
+        <location filename="tablemodel.cpp" line="91"/>
         <source>Weight</source>
         <translation>Масса, гр</translation>
     </message>
     <message>
-        <location filename="tablemodel.cpp" line="80"/>
+        <location filename="tablemodel.cpp" line="93"/>
         <source>[No Data]</source>
         <translation>[Нет данных]</translation>
+    </message>
+</context>
+<context>
+    <name>TemporaryProductDialog</name>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Новый продукт</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="22"/>
+        <source>Calories:</source>
+        <translation>Калории:</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="29"/>
+        <source>Proteins:</source>
+        <translation>Белки:</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="50"/>
+        <source>Fats:</source>
+        <translation>Жиры:</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="57"/>
+        <source>Carbs:</source>
+        <translation>Углеводы:</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="81"/>
+        <source>Name:</source>
+        <translation>Название:</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="105"/>
+        <source>OK</source>
+        <translation>ОК</translation>
+    </message>
+    <message>
+        <location filename="temporaryproductdialog.ui" line="112"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
     </message>
 </context>
 </TS>
