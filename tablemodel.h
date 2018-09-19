@@ -24,7 +24,7 @@ class TableModel : public QAbstractTableModel
 public:
     using product_list_type = std::vector<std::tuple<std::string, ProductParams, double, bool>>;
 
-    explicit TableModel(ProductDictionary & dict, QObject * parent = nullptr);
+    explicit TableModel(ProductDictionary & dict, bool editable = true, QObject * parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const override;
 
@@ -38,10 +38,12 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     // My API
+    void append(const TableModel * other);
+
     bool create_row(int position, const QModelIndex &parent = QModelIndex());
 
     template<typename S, typename P>
-    bool emplace_row(S&& row_name, P&& row_data, int position, double weight = default_weight, bool is_bold = false, const QModelIndex &parent = QModelIndex())
+    bool emplace_row(int position, S&& row_name, P&& row_data, double weight = default_weight, bool is_bold = false, const QModelIndex &parent = QModelIndex())
     {
         beginInsertRows(parent, position, position);
 
@@ -70,7 +72,11 @@ public:
     json get_json() const;
 
     ProductParams summary() const;
+    ProductParams mean_value() const;
     double total_weight() const;
+
+    void set_editable(bool editable);
+    bool is_editable() const;
 
     void clear();
 
@@ -87,6 +93,7 @@ public:
 private:
     product_list_type product_list;
     const ProductDictionary & product_dict_ref;
+    bool editable;
 
     static const double default_weight;
 };

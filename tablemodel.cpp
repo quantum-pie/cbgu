@@ -7,9 +7,10 @@
 
 const double TableModel::default_weight { 100 };
 
-TableModel::TableModel(ProductDictionary & dict, QObject * parent)
+TableModel::TableModel(ProductDictionary & dict, bool editable, QObject * parent)
     : QAbstractTableModel{ parent },
-      product_dict_ref{ dict }
+      product_dict_ref{ dict },
+      editable{ editable }
 {}
 
 int TableModel::columnCount(const QModelIndex &) const
@@ -65,7 +66,7 @@ Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
         return Qt::NoItemFlags;
 
     auto flg { QAbstractItemModel::flags(index) };
-    if(index.column() == name_idx() || index.column() == weight_idx())
+    if(editable && ( index.column() == name_idx() || index.column() == weight_idx() ))
         return Qt::ItemIsEditable | flg;
     else return flg;
 }
@@ -96,9 +97,19 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant{};
 }
 
+void TableModel::append(const TableModel * other)
+{
+    if(other->rowCount())
+    {
+        beginInsertRows(QModelIndex{}, rowCount(), rowCount() + other->rowCount() - 1);
+        product_list.insert(product_list.end(), other->product_list.begin(), other->product_list.end());
+        endInsertRows();
+    }
+}
+
 bool TableModel::create_row(int position, const QModelIndex &parent)
 {
-    return emplace_row("", ProductParams{0, 0, 0, 0}, position, default_weight, false, parent);
+    return emplace_row(position, "", ProductParams{0, 0, 0, 0}, default_weight, false, parent);
 }
 
 bool TableModel::remove_row(int position, const QModelIndex &parent)
@@ -194,6 +205,31 @@ ProductParams TableModel::summary() const
     return params;
 }
 
+ProductParams TableModel::mean_value() const
+{
+    ProductParams params {0, 0, 0, 0};
+    double total_w { 0 };
+    for(auto & product : product_list)
+    {
+        double weight { std::get<2>(product) };
+        auto& par = std::get<1>(product);
+        params.calories += par.calories * weight;
+        params.proteins += par.proteins * weight;
+        params.fats += par.fats * weight;
+        params.carbs += par.carbs * weight;
+        total_w += weight;
+    }
+
+    if(!product_list.empty())
+    {
+        params.calories /= total_w;
+        params.proteins /= total_w;
+        params.fats /= total_w;
+        params.carbs /= total_w;
+    }
+    return params;
+}
+
 double TableModel::total_weight() const
 {
     double result {0};
@@ -206,5 +242,18 @@ double TableModel::total_weight() const
 
 void TableModel::clear()
 {
+    int last = std::max(0, rowCount() - 1);
+    beginRemoveRows(QModelIndex{}, 0, last);
     product_list.clear();
+    endRemoveRows();
+}
+
+void TableModel::set_editable(bool is_editable)
+{
+    editable = is_editable;
+}
+
+bool TableModel::is_editable() const
+{
+    return editable;
 }
