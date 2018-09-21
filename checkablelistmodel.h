@@ -35,6 +35,15 @@ public:
     }
 
     bool remove_row(int position);
+    std::pair<std::string, QColor> item_at(int row) const;
+
+    template<typename S, typename Q>
+    void mutate_row(S&& name, Q&& color, int row)
+    {
+        std::get<0>(list[row]) = std::forward<S>(name);
+        std::get<2>(list[row]) = std::forward<Q>(color);
+    }
+
     json get_json() const;
     json get_goals() const;
     void clear();

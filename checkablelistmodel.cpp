@@ -94,6 +94,11 @@ json CheckableListModel::get_goals() const
     return j;
 }
 
+std::pair<std::string, QColor> CheckableListModel::item_at(int row) const
+{
+    return std::make_pair(std::get<0>(list[row]), std::get<2>(list[row]));
+}
+
 void CheckableListModel::clear()
 {
     while(rowCount())
