@@ -13,17 +13,22 @@ class GoalDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GoalDialog(QWidget *parent = nullptr);
+    using item_type = std::pair<std::string, QColor>;
+
+    explicit GoalDialog(const item_type & old_item = std::make_pair("", Qt::white),
+                        QWidget *parent = nullptr);
     ~GoalDialog();
 
-    std::pair<std::string, QColor> get_result() const;
+    item_type get_result() const;
 
 private slots:
     void ok_pushed();
     void color_chosen();
 
 private:
-    std::pair<std::string, QColor> data;
+    void set_background(const QColor & color);
+
+    item_type data;
     Ui::GoalDialog *ui;
     QColorDialog color_dialog;
 };

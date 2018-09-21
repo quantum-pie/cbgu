@@ -3,11 +3,14 @@
 
 #include <QPushButton>
 
-GoalDialog::GoalDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::GoalDialog)
+GoalDialog::GoalDialog(const item_type & old_item, QWidget *parent)
+    : QDialog{ parent },
+      ui{ new Ui::GoalDialog }
 {
     ui->setupUi(this);
+
+    ui->name_le->setText(QString::fromStdString(old_item.first));
+    set_background(old_item.second);
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pushed()));
     connect(ui->cancel_button, SIGNAL(released()), this, SLOT(reject()));
@@ -31,13 +34,18 @@ void GoalDialog::ok_pushed()
 void GoalDialog::color_chosen()
 {
     data.second = color_dialog.selectedColor();
-    QPalette palette;
-    palette.setColor(QPalette::Text, Qt::black);
-    palette.setColor(QPalette::Base, data.second);
-    ui->name_le->setPalette(palette);
+    set_background(data.second);
 }
 
 std::pair<std::string, QColor> GoalDialog::get_result() const
 {
     return data;
+}
+
+void GoalDialog::set_background(const QColor & color)
+{
+    QPalette palette;
+    palette.setColor(QPalette::Text, Qt::black);
+    palette.setColor(QPalette::Base, color);
+    ui->name_le->setPalette(palette);
 }
