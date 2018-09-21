@@ -11,6 +11,7 @@ GoalDialog::GoalDialog(const item_type & old_item, QWidget *parent)
 
     ui->name_le->setText(QString::fromStdString(old_item.first));
     set_background(old_item.second);
+    data.second = old_item.second;
 
     connect(ui->ok_button, SIGNAL(released()), this, SLOT(ok_pushed()));
     connect(ui->cancel_button, SIGNAL(released()), this, SLOT(reject()));
