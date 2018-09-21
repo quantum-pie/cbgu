@@ -36,6 +36,7 @@ private slots:
     void add_temporary_triggered();
     void remove_product_triggered();
     void add_goal_triggered();
+    void edit_goal_triggered();
     void remove_goal_triggered();
     void table_updated();
     void calories_norm_changed(int norm);

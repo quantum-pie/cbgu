@@ -92,12 +92,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setContextMenuPolicy(Qt::ActionsContextMenu);
 
     auto add_goal_action = new QAction(QIcon(":/icons/icons/add.png"), tr("Add Goal"), list_context_menu);
+    auto edit_goal_action = new QAction(QIcon(":/icons/icons/list.png"), tr("Edit Goal"), list_context_menu);
     auto remove_goal_action = new QAction(QIcon(":/icons/icons/garbage.png"), tr("Remove Goal"), list_context_menu);
 
     ui->listView->addAction(add_goal_action);
+    ui->listView->addAction(edit_goal_action);
     ui->listView->addAction(remove_goal_action);
 
     connect(add_goal_action, SIGNAL(triggered()), this, SLOT(add_goal_triggered()));
+    connect(edit_goal_action, SIGNAL(triggered()), this, SLOT(edit_goal_triggered()));
     connect(remove_goal_action, SIGNAL(triggered()), this, SLOT(remove_goal_triggered()));
 
     connect(ui->calories_sb, SIGNAL(valueChanged(int)), this, SLOT(calories_norm_changed(int)));
@@ -228,6 +231,25 @@ void MainWindow::add_goal_triggered()
             treeutils::empty_name_error();
         else
             daily_goals_list->add_row(std::move(result.first), std::move(result.second));
+    }
+}
+
+void MainWindow::edit_goal_triggered()
+{
+    auto index = ui->listView->selectionModel()->currentIndex();
+    if(index.isValid())
+    {
+        GoalDialog goals { daily_goals_list->item_at(index.row()) };
+        int res = goals.exec();
+
+        if(res == QDialog::Accepted)
+        {
+            auto result = goals.get_result();
+            if(result.first.empty())
+                treeutils::empty_name_error();
+            else
+                daily_goals_list->mutate_row(std::move(result.first), std::move(result.second), index.row());
+        }
     }
 }
 
@@ -452,13 +474,16 @@ void MainWindow::push_tables(int user_id, const QDate & date)
 
     ui->comboBox_meal->blockSignals(false);
 
+    /*
     bool today = (QDate::currentDate() == date);
+
     ui->listView->setEnabled(today);
     ui->tableView->setEnabled(today);
     ui->calories_sb->setEnabled(today);
     ui->proteins_sb->setEnabled(today);
     ui->fats_sb->setEnabled(today);
     ui->carbs_sb->setEnabled(today);
+    */
 
     switch_or_add_meal(ui->comboBox_meal->currentIndex());
 }
