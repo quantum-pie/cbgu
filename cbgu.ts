@@ -14,7 +14,7 @@
     <message>
         <location filename="goaldialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Новая цель</translation>
+        <translation>Цель</translation>
     </message>
     <message>
         <location filename="goaldialog.ui" line="24"/>
@@ -167,7 +167,7 @@
     <message>
         <location filename="mainwindow.ui" line="248"/>
         <source>Goals</source>
-        <translation>События</translation>
+        <translation>Цели</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="44"/>
@@ -216,7 +216,7 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="44"/>
-        <location filename="mainwindow.cpp" line="398"/>
+        <location filename="mainwindow.cpp" line="453"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
@@ -238,12 +238,17 @@
     <message>
         <location filename="mainwindow.cpp" line="94"/>
         <source>Add Goal</source>
-        <translation>Добавить событие</translation>
+        <translation>Добавить цель</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="95"/>
+        <source>Edit Goal</source>
+        <translation>Редактировать цель</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="96"/>
         <source>Remove Goal</source>
-        <translation>Удалить событие</translation>
+        <translation>Удалить цель</translation>
     </message>
 </context>
 <context>
