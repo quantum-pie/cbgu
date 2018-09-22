@@ -314,7 +314,7 @@ void MainWindow::update_status(QLineEdit * le, int norm)
     le->setPalette(palette);
 }
 
-bool MainWindow::build_goals(const std::string & path)
+bool MainWindow::build_goals(const std::string & path, bool patch)
 {
     std::ifstream in_goals{ path };
     if(in_goals.good())
@@ -322,8 +322,7 @@ bool MainWindow::build_goals(const std::string & path)
         json j_goals;
         in_goals >> j_goals;
 
-        treeutils::build_list(daily_goals_list, j_goals);
-
+        treeutils::build_list(daily_goals_list, j_goals, patch);
         return true;
     }
     else return false;
@@ -459,10 +458,8 @@ void MainWindow::push_tables(int user_id, const QDate & date)
     // energy end
 
     // goals
-    if(!build_goals(user_prefix + ".goals"))
-    {
-        build_goals(user_data_path + user_name + '/' + "goals.dat");
-    }
+    bool res = build_goals(user_prefix + ".goals");
+    build_goals(user_data_path + user_name + '/' + "goals.dat", res);
     // goals end
 
     // norm

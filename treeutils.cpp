@@ -85,19 +85,45 @@ TableModel * build_table(TableModel * table_model, const json & j)
     return table_model;
 }
 
-CheckableListModel * build_list(CheckableListModel * list_model, const json & j)
+static void patch_list(CheckableListModel * list_model, const json & j)
 {
-    int rows {0};
+    for(auto it = j.begin(); it != j.end(); ++it)
+    {
+        auto name = it.key();
+        auto val = it.value();
+
+        for(int row { 0 }; row < list_model->rowCount(); ++row)
+        {
+            if(list_model->item_at(row).first == name)
+            {
+                list_model->mutate_row(std::move(name), QString::fromStdString(val["color"]), row);
+            }
+        }
+    }
+}
+
+static void build_list_from_scratch(CheckableListModel * list_model, const json & j)
+{
     list_model->clear();
+    int rows {0};
+    for(auto it = j.begin(); it != j.end(); ++it)
+    {
+        auto val = it.value();
+        auto checked = val["checked"] ? Qt::Checked : Qt::Unchecked;
+
+        list_model->add_row(it.key(), QString::fromStdString(val["color"]));
+        list_model->setData(list_model->index(rows++), checked, Qt::CheckStateRole);
+    }
+}
+
+CheckableListModel * build_list(CheckableListModel * list_model, const json & j, bool patch)
+{
     if(!j.is_null())
     {
-        for(auto it = j.begin(); it != j.end(); ++it)
-        {
-            auto val = it.value();
-            auto checked = val["checked"] ? Qt::Checked : Qt::Unchecked;
-            list_model->add_row(it.key(), QString::fromStdString(val["color"]));
-            list_model->setData(list_model->index(rows++), checked, Qt::CheckStateRole);
-        }
+        if(patch)
+            patch_list(list_model, j);
+        else
+            build_list_from_scratch(list_model, j);
     }
     return list_model;
 }

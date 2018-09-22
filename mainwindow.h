@@ -52,7 +52,7 @@ private:
 
     void update_status(QLineEdit * le, int norm);
 
-    bool build_goals(const std::string & path);
+    bool build_goals(const std::string & path, bool patch = false);
     bool build_norm(const std::string & path);
 
     Ui::MainWindow * ui;
